@@ -3,11 +3,6 @@ console.log(`Loading *${process.env.NODE_ENV}* envs`);
 dotenv.config({path: `.env.${process.env.NODE_ENV}`})
 dotenv.config({path: `.env`})
 
-// small change I added in order to make this work at localhost:3000 - Vlad
-process.env.PORT = "3000"
-process.env.IP = "localhost"
-process.env.URL = "http://localhost:3000/"
-
 // Add necessary .env variables to the array below
 const envs = ["PORT", "IP", "URL"];
 let env: Record<string, string> = {};
