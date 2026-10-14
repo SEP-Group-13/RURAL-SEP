@@ -4,8 +4,9 @@
   "description": "Open source repository for the RURAL SEP dashboard application.",
   "main": "server/app.js",
   "scripts": {
-    "dev:client": "echo \"Add client dev script\"",
-    "build:client": "echo \"Add client build script\"",
+    "dev:client": "esbuild frontend/src/index.tsx --bundle --outfile=public/js/app.js --format=esm --jsx=automatic --sourcemap --watch",
+    "build:client": "esbuild frontend/src/index.tsx --bundle --outfile=public/js/app.js --format=esm --jsx=automatic --minify --sourcemap",
+    "typecheck:client": "tsc -p frontend/tsconfig.json",
     "dev:server": "NODE_ENV=development tsx watch --tsconfig server/tsconfig.json server/src/app.ts",
     "build:server": "tsup --config server/tsup.config.ts",
     "prod:server": "NODE_ENV=production node dist/server/app.js",
@@ -25,11 +26,14 @@
   },
   "homepage": "https://github.com/SEP-Group-13/RURAL-sep#readme",
   "dependencies": {
+    "chart.js": "^4.5.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^18.0.7",
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.1",
     "jsonwebtoken": "^9.0.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "zod": "^4.6.6"
   },
   "devDependencies": {
@@ -39,6 +43,9 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.27.2",
     "npm-run-all2": "^9.0.3",
     "tsup": "^8.5.1",
     "tsx": "^4.23.15",

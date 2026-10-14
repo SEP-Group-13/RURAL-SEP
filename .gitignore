@@ -151,3 +151,5 @@ vite.config.ts.timestamp-*
 
 # Mac
 .DS_Store
+# esbuild client bundle output
+public/js
