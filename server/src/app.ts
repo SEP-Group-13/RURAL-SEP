@@ -54,9 +54,9 @@ app.use(errorHandler)
 
 // Start listening
 try {
-  http.createServer(app).listen(Number(env.PORT), env.IP, () => {
+  http.createServer(app).listen(Number(env.PORT), env.HOST, () => {
     console.log(`Server started ${new Date()} on port ${env.PORT}`)
-    console.log(`http://${env.IP}:${env.PORT}/`)
+    console.log(`http://${env.HOST}:${env.PORT}/`)
   })
 } catch (err) {
   console.error("Failed to start the server")

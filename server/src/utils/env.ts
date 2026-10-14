@@ -3,19 +3,24 @@ console.log(`Loading *${process.env.NODE_ENV}* envs`);
 dotenv.config({path: `.env.${process.env.NODE_ENV}`})
 dotenv.config({path: `.env`})
 
-// Add necessary .env variables to the array below
-const envs = ["PORT", "IP", "URL"];
-let env: Record<string, string> = {};
-
-for (const vars of envs) {
-  if (!process.env[vars]) {
-    throw new Error(`Missing env variable: ${vars}`)
+const required = (name: string): string => {
+  if (!process.env[name]) {
+    throw new Error(`Missing env variable: ${name}`)
   }
-  env[vars] = process.env[vars];
+  
+  return process.env[name];
 }
 
-// Manual Changes
-// env["DB_URL"] = process.env.DB_URL!.replace("${DB_USER}", env["DB_USER"]).replace("${DB_PASS}", env["DB_PASS"]).replace("${DB_NAME}", env["DB_NAME"]);
-env["URL"] = process.env.URL!.replace("${PORT}", env["PORT"]).replace("${IP}", env["IP"]);
+// Defaults
+const port = process.env.PORT || "3000";
+const host = process.env.HOST || "127.0.0.1";
+
+// Define all environment variables in one place
+const env: Record<string, string> = {
+  PORT: port,
+  HOST: host,
+  // APP_URL: `http://${host}:${port}`,
+  // DB_URL: required("DB_URL"),
+}
 
 export default env;
