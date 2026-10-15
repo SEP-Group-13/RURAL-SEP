@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 import rateLimit from 'express-rate-limit'
 import cookieParser from 'cookie-parser'
 import env from '@/utils/env.js'
+import { waitForDatabaseConnection } from '@/utils/database.js'
 import { errorHandler } from '@/routes/error.route.js'
 
 
@@ -42,24 +43,17 @@ app.use(express.json()) // Allows parsing of application/json
 app.use(errorHandler)
 
 
-// Ensure DB is accessible
-// try {
-//   await checkDatabaseConnection()
-// } catch (err) {
-//   console.error("Failed to connect to the database")
-//   console.error(err)
-//   process.exit(1)
-// }
-
-
 // Start listening
 try {
+  // Refuse requests until the configured database accepts an authenticated query.
+  await waitForDatabaseConnection()
+  console.log('Database connection verified')
   http.createServer(app).listen(Number(env.PORT), env.HOST, () => {
     console.log(`Server started ${new Date()} on port ${env.PORT}`)
     console.log(`http://${env.HOST}:${env.PORT}/`)
   })
 } catch (err) {
-  console.error("Failed to start the server")
+  console.error("Failed to start the server or connect to the database")
   console.error(err)
   process.exit(1)
 }
