@@ -2,6 +2,6 @@ import type { Config } from "@react-router/dev/config";
 
 export default {
   // Config options...
-  // Server-side render by default, to enable SPA mode set this to `false`
-  ssr: true,
+  // SPA mode: no server rendering, all data is fetched in the browser via clientLoader
+  ssr: false,
 } satisfies Config;
