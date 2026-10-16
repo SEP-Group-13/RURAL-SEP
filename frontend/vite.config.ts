@@ -7,4 +7,11 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  server: {
+    //forward API calls to Express backend, so the browser sees a single origin
+    proxy: {
+      "/api": "http://127.0.0.1:3000"
+    },
+
+  },
 });

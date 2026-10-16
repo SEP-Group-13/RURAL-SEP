@@ -4,8 +4,8 @@
   "description": "Open source repository for the RURAL SEP dashboard application.",
   "main": "server/app.js",
   "scripts": {
-    "dev:client": "echo \"Add client dev script\"",
-    "build:client": "echo \"Add client build script\"",
+    "dev:client": "npm --prefix frontend run dev",
+    "build:client": "npm --prefix frontend run build",
     "dev:server": "NODE_ENV=development tsx watch --tsconfig server/tsconfig.json server/src/app.ts",
     "build:server": "tsup --config server/tsup.config.ts",
     "prod:server": "NODE_ENV=production node dist/server/app.js",
