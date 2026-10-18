@@ -26,6 +26,7 @@ const app = express()
 
 
 // Midlewares
+app.use(express.static(path.resolve(__dirname, '../../dist/client/client')))  // Built React SPA (npm run build:client)
 app.use(express.static(path.resolve(__dirname, "../../public")))    // Will eventually be replaced by nginx or equivalent
 // app.use(cookieParser()) // Allows parsing of cookies
 app.use(express.json()) // Allows parsing of application/json

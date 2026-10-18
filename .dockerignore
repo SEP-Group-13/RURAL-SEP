@@ -4,6 +4,6 @@
 **/build
 .env
 .env.*
-frontend
+**/.react-router
 *.log
 .DS_Store

@@ -1,8 +1,9 @@
 import dotenv from "dotenv"
 import { z } from "zod"
 console.log(`Loading *${process.env.NODE_ENV}* envs`);
-dotenv.config({path: `.env.${process.env.NODE_ENV}`})
-dotenv.config({path: `.env`})
+// Scripts run from server/ (npm workspace), the env files live in the repo root
+dotenv.config({path: `../.env.${process.env.NODE_ENV}`})
+dotenv.config({path: `../.env`})
 
 // Define all environment variables in one place
 const env: Record<string, string> = z.object({
