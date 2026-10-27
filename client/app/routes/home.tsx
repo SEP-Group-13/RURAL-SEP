@@ -1,13 +1,16 @@
 import type { Route } from "./+types/home";
-import { Home } from "../home/home";
 
 export function meta({}: Route.MetaArgs) {
-    return [
-        { title: "RURAL Study Dashboard" },
-        { name: "description", content: "Welcome to dashboard!" },
-    ];
+  return [
+    { title: "RURAL Study Dashboard" },
+    { name: "description", content: "Welcome to dashboard!" },
+  ];
 }
 
-export default function HomeRoute() {
-    return <Home />;
+export default function ParticipantsRoute() {
+  return (
+    <div>
+      <h1>Participants</h1>
+    </div>
+  );
 }

@@ -1,15 +1,81 @@
 @import "tailwindcss";
 
+:root,
+[ui-theme="light"] {
+  color-scheme: light;
+
+  /* Core */
+  --surface: #ffffff;
+  --text-main: #1e1e1e;
+  --color-primary: #ffffff;
+  --color-secondary: #33fa33;
+
+  /* Side Bar */
+  --sidebar-surface: #efefef;
+
+
+  /* Route Button */
+  --route-button-selected-bg: var(--color-primary);
+  --route-button-selected-text: var(--text-main);
+  --route-button-hover-bg: #d7d5d5;
+  --route-button-hover-text: var(--text-main);
+
+  /* Dashboard (bg of topbar and outlet)*/
+  --dashboard-surface: #ffffff;
+}
+
+[ui-theme="dark"] {
+  color-scheme: dark;
+  /* Core */
+  --surface: #464343;
+  --text-main: #f8f6f6;
+  --color-primary: #202020;
+  --color-secondary: #219021;
+
+  /* Side Bar */
+  --sidebar-surface: #0e0e0e;
+
+  /* Route Button */
+  --route-button-selected-bg: var(--color-primary);
+  --route-button-selected-text: var(--text-main);
+  --route-button-hover-bg: #202020;
+  --route-button-hover-text: var(--text-main);
+
+  /* Dashboard (bg of topbar and outlet)*/
+  --dashboard-surface: #202020;
+
+}
+
 @theme {
+
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Register Core Style*/
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-text-main: var(--text-main);
+  --color-bg: var(--surface);
+
+  /* Register Side Bar */
+  --color-sidebar-surface: var(--sidebar-surface);
+
+  /* Register Route Button Style*/
+  --color-route-button-selected-bg: var(--route-button-selected-bg);
+  --color-route-button-selected-text: var(--route-button-selected-text);
+  --color-route-button-hover-bg: var(--route-button-hover-bg);
+  --color-route-button-hover-text: var(--route-button-hover-text);
+  --color-route-button-hover-bg: var(--route-button-hover-bg);
+  --color-route-button-hover-text: var(--route-button-hover-text);
+
+  /* Register Dashboard */
+  --color-dashboard-surface: var(--dashboard-surface);
 }
+
+
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+  background-color: var(--bg);
+  color: var(--text-main);
 }
