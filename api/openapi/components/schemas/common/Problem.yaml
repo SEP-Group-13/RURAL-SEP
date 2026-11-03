@@ -1,0 +1,26 @@
+title: Problem
+type: object
+description: RFC 9457 problem details. Clients act on `type`, not on `title` or `detail`.
+required:
+  - type
+  - title
+  # - status
+properties:
+  type:
+    type: string
+    format: uri-reference
+    description: Stable identifier, written as `urn:rural-dashboard:problem:<name>`.
+  title:
+    type: string
+  # status:
+  #   type: integer
+  #   minimum: 400
+  #   maximum: 599
+  detail:
+    type: string
+    description: Names the specific problem. Written for the end user.
+  errors:
+    type: array
+    description: Invalid request fields. Present on status 422 only.
+    items:
+      $ref: ProblemFieldError.yaml
