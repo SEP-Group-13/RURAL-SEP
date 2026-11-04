@@ -1,0 +1,4 @@
+title: ColumnName
+type: string
+minLength: 1
+description: Name of a column as shown to the user. Unique within a view.

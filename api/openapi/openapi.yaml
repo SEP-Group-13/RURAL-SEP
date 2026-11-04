@@ -27,3 +27,7 @@ tags:
 paths:
   /meta:
     $ref: paths/meta.yaml
+  /columns:
+    $ref: paths/columns.yaml
+  /burden-presets:
+    $ref: paths/burden-presets.yaml

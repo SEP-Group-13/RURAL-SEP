@@ -1,0 +1,22 @@
+title: BurdenPreset
+type: object
+required:
+  - name
+  - formula
+  - bands
+  - isDefault
+properties:
+  name:
+    $ref: ../common/ColumnName.yaml
+  formula:
+    type:
+      - string
+      - 'null'
+    description: Formula expression. `null` when the burden is a column of the table.
+  bands:
+    type: array
+    items:
+      $ref: ../view/Band.yaml
+  isDefault:
+    type: boolean
+    description: Default burdens are part of every view. The others are added by the user.
