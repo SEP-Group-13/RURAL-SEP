@@ -1,0 +1,15 @@
+title: Sort
+type: object
+additionalProperties: false
+description: Participants without a value come last.
+required:
+  - column
+  - direction
+properties:
+  column:
+    $ref: ../common/ColumnName.yaml
+  direction:
+    type: string
+    enum:
+      - asc
+      - desc

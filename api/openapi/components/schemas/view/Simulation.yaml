@@ -1,0 +1,12 @@
+title: Simulation
+type: object
+additionalProperties: false
+description: A column that holds the same value for every participant.
+required:
+  - name
+  - value
+properties:
+  name:
+    $ref: ../common/ColumnName.yaml
+  value:
+    type: number

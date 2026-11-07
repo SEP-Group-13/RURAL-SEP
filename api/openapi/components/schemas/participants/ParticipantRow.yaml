@@ -1,0 +1,16 @@
+title: ParticipantRow
+type: object
+required:
+  - participantId
+  - values
+properties:
+  participantId:
+    type: string
+  values:
+    type: object
+    description: Value per column name.
+    additionalProperties:
+      type:
+        - string
+        - number
+        - 'null'

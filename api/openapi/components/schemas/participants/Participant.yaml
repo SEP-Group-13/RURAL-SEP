@@ -1,0 +1,53 @@
+title: Participant
+type: object
+description: Contact details are `null` when the data source does not hold them.
+required:
+  - participantId
+  - age
+  - sex
+  - race
+  - county
+  - state
+  - studyStatus
+  - name
+  - email
+  - phone
+properties:
+  participantId:
+    type: string
+  age:
+    type:
+      - integer
+      - 'null'
+  sex:
+    type:
+      - string
+      - 'null'
+  race:
+    type:
+      - string
+      - 'null'
+  county:
+    type:
+      - string
+      - 'null'
+  state:
+    type:
+      - string
+      - 'null'
+  studyStatus:
+    type:
+      - string
+      - 'null'
+  name:
+    type:
+      - string
+      - 'null'
+  email:
+    type:
+      - string
+      - 'null'
+  phone:
+    type:
+      - string
+      - 'null'

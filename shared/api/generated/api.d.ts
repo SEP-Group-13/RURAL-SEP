@@ -58,6 +58,101 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/participants/query": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Query the participant data table */
+        post: operations["queryParticipants"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/participants/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search participants
+         * @description Matches the start of the participant ID. When the data source holds contact details,
+         *     names, email addresses and phone numbers that contain the text also match.
+         */
+        get: operations["searchParticipants"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/participants/{participantId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                participantId: components["parameters"]["ParticipantId"];
+            };
+            cookie?: never;
+        };
+        /** Get a participant */
+        get: operations["getParticipant"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/participants/{participantId}/burden": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                participantId: components["parameters"]["ParticipantId"];
+            };
+            cookie?: never;
+        };
+        /** Get the burden of a participant per year and cumulatively */
+        get: operations["getParticipantBurden"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/participants/{participantId}/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                participantId: components["parameters"]["ParticipantId"];
+            };
+            cookie?: never;
+        };
+        /** List the activities of a participant */
+        get: operations["listParticipantActivities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -145,6 +240,197 @@ export interface components {
         BurdenPresets: {
             presets: components["schemas"]["BurdenPreset"][];
         };
+        /** CategoricalFilter */
+        CategoricalFilter: {
+            column: components["schemas"]["ColumnName"];
+            values: string[];
+        };
+        /** RangeFilter */
+        RangeFilter: {
+            column: components["schemas"]["ColumnName"];
+            min?: number;
+            max?: number;
+        } | unknown | unknown;
+        /**
+         * Filter
+         * @description Participants without a value in the column are excluded. `min` larger than `max` is rejected.
+         */
+        Filter: components["schemas"]["CategoricalFilter"] | components["schemas"]["RangeFilter"];
+        /**
+         * Formula
+         * @description A numeric column calculated from other columns. The column shows the result for the selected years
+         *     combined; its band column uses the values of each year.
+         */
+        Formula: {
+            name: components["schemas"]["ColumnName"];
+            /**
+             * @description Numbers, column names in square brackets, `+ - * /` and parentheses.
+             *     The result is `null` when a value is missing or on division by zero.
+             * @example [Time burden (min)] / 360 + [Radiation burden (mSv)] / 10
+             */
+            expression: string;
+        };
+        /**
+         * Simulation
+         * @description A column that holds the same value for every participant.
+         */
+        Simulation: {
+            name: components["schemas"]["ColumnName"];
+            value: number;
+        };
+        /**
+         * BandSet
+         * @description Adds the band column `<column> band` for a numeric column. Bands are assigned per calendar year from
+         *     that year's value, so there is one band column for each selected year.
+         *     Bands are in ascending order. Labels and bounds must be unique.
+         * @example {
+         *       "column": "Radiation burden (mSv)",
+         *       "bands": [
+         *         {
+         *           "label": "Low",
+         *           "upperBound": 3
+         *         },
+         *         {
+         *           "label": "Medium",
+         *           "upperBound": 10
+         *         },
+         *         {
+         *           "label": "High"
+         *         }
+         *       ]
+         *     }
+         */
+        BandSet: {
+            column: components["schemas"]["ColumnName"];
+            bands: components["schemas"]["Band"][];
+        };
+        /**
+         * View
+         * @description The settings that decide which participants and values a request covers. An empty view covers all
+         *     participants and years. Formula and simulation names must differ from each other and from all other columns.
+         */
+        View: {
+            /** @description Calendar years to include. All years when absent. */
+            years?: number[];
+            filters?: components["schemas"]["Filter"][];
+            formulas?: components["schemas"]["Formula"][];
+            simulations?: components["schemas"]["Simulation"][];
+            bands?: components["schemas"]["BandSet"][];
+            excludedParticipantIds?: string[];
+        };
+        /**
+         * Sort
+         * @description Participants without a value come last.
+         */
+        Sort: {
+            column: components["schemas"]["ColumnName"];
+            /** @enum {string} */
+            direction: "asc" | "desc";
+        };
+        /** PageRequest */
+        PageRequest: {
+            /** @default 1 */
+            page: number;
+            /** @default 25 */
+            pageSize: number;
+        };
+        /** QueryParticipantsRequest */
+        QueryParticipantsRequest: {
+            view: components["schemas"]["View"];
+            /**
+             * @description Columns to return, in display order. A band column without a year stands for one column
+             *     per selected year, returned as `<column> band <year>`.
+             */
+            columns: components["schemas"]["ColumnName"][];
+            sort?: components["schemas"]["Sort"];
+            page?: components["schemas"]["PageRequest"];
+        };
+        /** ParticipantRow */
+        ParticipantRow: {
+            participantId: string;
+            /** @description Value per column name. */
+            values: {
+                [key: string]: string | number | null;
+            };
+        };
+        /** ParticipantPage */
+        ParticipantPage: {
+            /** @description Number of participants in the view, over all pages. */
+            total: number;
+            page: number;
+            pageSize: number;
+            /** @description Returned columns in order, with band columns expanded per year. */
+            columns: components["schemas"]["ColumnName"][];
+            rows: components["schemas"]["ParticipantRow"][];
+        };
+        /** ParticipantSearchResult */
+        ParticipantSearchResult: {
+            /** @description Number of matches, which can exceed `limit`. */
+            total: number;
+            participants: {
+                participantId: string;
+                name: string | null;
+            }[];
+        };
+        /**
+         * Participant
+         * @description Contact details are `null` when the data source does not hold them.
+         */
+        Participant: {
+            participantId: string;
+            age: number | null;
+            sex: string | null;
+            race: string | null;
+            county: string | null;
+            state: string | null;
+            studyStatus: string | null;
+            name: string | null;
+            email: string | null;
+            phone: string | null;
+        };
+        /** BurdenSummary */
+        BurdenSummary: {
+            timeMinutes: number;
+            timeByExamElement: {
+                examElement: string;
+                timeMinutes: number;
+            }[];
+            radiationMsv: number;
+            contactFrequency: number;
+            participation: number;
+        };
+        /** ParticipantBurden */
+        ParticipantBurden: {
+            cumulative: components["schemas"]["BurdenSummary"];
+            /** @description Ascending by year. */
+            perYear: {
+                year: number;
+                burden: components["schemas"]["BurdenSummary"];
+            }[];
+        };
+        /**
+         * Activity
+         * @description Duration and radiation are `null` when the activity was not completed.
+         */
+        Activity: {
+            /** Format: date-time */
+            date: string;
+            examElement: string | null;
+            /** @enum {string} */
+            examType: "core" | "additional";
+            /** @description Name of the additional study. `null` for the core exam. */
+            additionalStudy: string | null;
+            location: string | null;
+            /** @enum {string} */
+            status: "completed" | "notCompleted";
+            durationMinutes: number | null;
+            radiationMsv: number | null;
+        };
+        /** ActivityList */
+        ActivityList: {
+            /** @description Ascending by date. */
+            activities: components["schemas"]["Activity"][];
+        };
     };
     responses: {
         /** @description The data source cannot be reached. */
@@ -156,8 +442,37 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
+        /** @description The request is malformed. */
+        BadRequest: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description A value in the request is invalid. */
+        UnprocessableContent: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description The resource does not exist. */
+        NotFound: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
     };
-    parameters: never;
+    parameters: {
+        ParticipantId: string;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
@@ -224,6 +539,130 @@ export interface operations {
                     "application/json": components["schemas"]["BurdenPresets"];
                 };
             };
+        };
+    };
+    queryParticipants: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QueryParticipantsRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParticipantPage"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            422: components["responses"]["UnprocessableContent"];
+            503: components["responses"]["DataUnavailable"];
+        };
+    };
+    searchParticipants: {
+        parameters: {
+            query: {
+                q: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParticipantSearchResult"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            503: components["responses"]["DataUnavailable"];
+        };
+    };
+    getParticipant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                participantId: components["parameters"]["ParticipantId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Participant"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+            503: components["responses"]["DataUnavailable"];
+        };
+    };
+    getParticipantBurden: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                participantId: components["parameters"]["ParticipantId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParticipantBurden"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+            503: components["responses"]["DataUnavailable"];
+        };
+    };
+    listParticipantActivities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                participantId: components["parameters"]["ParticipantId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityList"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+            503: components["responses"]["DataUnavailable"];
         };
     };
 }

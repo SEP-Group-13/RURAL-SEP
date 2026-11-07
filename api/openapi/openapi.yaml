@@ -31,3 +31,13 @@ paths:
     $ref: paths/columns.yaml
   /burden-presets:
     $ref: paths/burden-presets.yaml
+  /participants/query:
+    $ref: paths/participants-query.yaml
+  /participants/search:
+    $ref: paths/participants-search.yaml
+  /participants/{participantId}:
+    $ref: paths/participants-participantId.yaml
+  /participants/{participantId}/burden:
+    $ref: paths/participants-participantId-burden.yaml
+  /participants/{participantId}/activities:
+    $ref: paths/participants-participantId-activities.yaml
