@@ -17,7 +17,13 @@ export default defineConfig({
             "/api": process.env.API_URL ?? "http://localhost:3000",
         },
     },
+
+    build: {
+        emptyOutDir: true,
+    },
+
     preview: {
         host: "127.0.0.1",
     },
+
 });
