@@ -8,7 +8,7 @@ export default function DashboardLayout() {
       <SideBar />
       <div className="bg-dashboard-surface">
         <TopBar />
-        <Outlet className="bg-black"/>
+        <Outlet />
       </div>
     </div>
   );
