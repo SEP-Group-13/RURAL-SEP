@@ -1,0 +1,32 @@
+post:
+  operationId: queryChartHistogram
+  tags:
+    - Charts
+  summary: Get the histogram of a numeric column
+  x-urd:
+    - URF 1.8
+    - URF 2.9
+    - URF 10.4
+    - URF 10.5
+    - URF 11.2
+    - URF 11.3
+    - URF 11.4
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/charts/HistogramRequest.yaml
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/charts/HistogramResponse.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '422':
+      $ref: ../components/responses/UnprocessableContent.yaml
+    '503':
+      $ref: ../components/responses/DataUnavailable.yaml

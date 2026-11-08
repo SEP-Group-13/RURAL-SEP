@@ -41,3 +41,7 @@ paths:
     $ref: paths/participants-participantId-burden.yaml
   /participants/{participantId}/activities:
     $ref: paths/participants-participantId-activities.yaml
+  /charts/counts:
+    $ref: paths/charts-counts.yaml
+  /charts/histogram:
+    $ref: paths/charts-histogram.yaml

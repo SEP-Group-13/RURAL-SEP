@@ -1,0 +1,38 @@
+title: CountChartResponse
+type: object
+description: |
+  Participants per value of a categorical or band column. Every value is listed, also with a count of 0.
+  A band column without a year gives one series per selected year.
+required:
+  - series
+properties:
+  series:
+    type: array
+    items:
+      type: object
+      required:
+        - view
+        - year
+        - buckets
+      properties:
+        view:
+          type: integer
+          description: Index in `views`.
+        year:
+          type:
+            - integer
+            - 'null'
+          description: Set for band columns.
+        buckets:
+          type: array
+          items:
+            type: object
+            required:
+              - label
+              - count
+            properties:
+              label:
+                type: string
+              count:
+                type: integer
+                minimum: 0

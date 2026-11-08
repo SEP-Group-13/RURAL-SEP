@@ -153,6 +153,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/charts/counts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Count participants per value of a column */
+        post: operations["queryChartCounts"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/charts/histogram": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get the histogram of a numeric column */
+        post: operations["queryChartHistogram"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -431,6 +465,52 @@ export interface components {
             /** @description Ascending by date. */
             activities: components["schemas"]["Activity"][];
         };
+        /** CountChartRequest */
+        CountChartRequest: {
+            /** @description More than one view compares them. */
+            views: components["schemas"]["View"][];
+            column: components["schemas"]["ColumnName"];
+        };
+        /**
+         * CountChartResponse
+         * @description Participants per value of a categorical or band column. Every value is listed, also with a count of 0.
+         *     A band column without a year gives one series per selected year.
+         */
+        CountChartResponse: {
+            series: {
+                /** @description Index in `views`. */
+                view: number;
+                /** @description Set for band columns. */
+                year: number | null;
+                buckets: {
+                    label: string;
+                    count: number;
+                }[];
+            }[];
+        };
+        /** HistogramRequest */
+        HistogramRequest: {
+            /** @description More than one view compares them. */
+            views: components["schemas"]["View"][];
+            column: components["schemas"]["ColumnName"];
+            binWidth: number;
+        };
+        /**
+         * HistogramResponse
+         * @description Bin boundaries are multiples of `binWidth`, so the series of several views line up.
+         *     Empty bins between the lowest and highest value are listed with a count of 0.
+         */
+        HistogramResponse: {
+            series: {
+                /** @description Index in `views`. */
+                view: number;
+                bins: {
+                    /** @description The bin covers `lowerBound` up to, not including, `lowerBound + binWidth`. */
+                    lowerBound: number;
+                    count: number;
+                }[];
+            }[];
+        };
     };
     responses: {
         /** @description The data source cannot be reached. */
@@ -662,6 +742,60 @@ export interface operations {
                 };
             };
             404: components["responses"]["NotFound"];
+            503: components["responses"]["DataUnavailable"];
+        };
+    };
+    queryChartCounts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CountChartRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CountChartResponse"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            422: components["responses"]["UnprocessableContent"];
+            503: components["responses"]["DataUnavailable"];
+        };
+    };
+    queryChartHistogram: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HistogramRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistogramResponse"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            422: components["responses"]["UnprocessableContent"];
             503: components["responses"]["DataUnavailable"];
         };
     };
