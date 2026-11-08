@@ -1,24 +1,26 @@
-import { useMemo } from "react";
-import BarChart from "~/components/charts/BarChart";
-import { useViewAll } from "~/data/hooks";
-import { allParticipantsView } from "~/data/views";
+import { useMemo } from 'react'
+import BarChart from '~/components/charts/BarChart'
+import { useViewHandlerState, useViewRows, viewHandler } from '~/data'
 
-// TEMPORARY, add settings when pushed to repo
-const statuses = ["Active", "Completed", "Dropped Out"];
+const statuses = ['Active', 'Completed', 'Dropped Out']
 
 export default function VisualizationRoute() {
-  const { data, error } = useViewAll(allParticipantsView);
-  const counts = useMemo(
-    () => statuses.map((s) => (data ?? []).filter((r) => r.final_study_status === s).length),
-    [data],
-  );
+  useViewHandlerState(viewHandler)
+  const view = viewHandler.getActiveView()
+  const { state } = useViewRows(view)
+  const rows = state.status === 'ready' ? state.data : null
 
-  if (error) return <p className="p-4">Could not load participants: {error.message}</p>;
-  if (!data) return <p className="p-4">Loading…</p>;
+  const counts = useMemo(
+    () => statuses.map((status) => (rows ?? []).filter((row) => row.cells.studyStatus === status).length),
+    [rows],
+  )
+
+  if (state.status === 'error') return <p className="p-4">Could not load participants: {state.error}</p>
+  if (rows === null) return <p className="p-4">Loading…</p>
 
   return (
     <div className="p-4 max-w-3xl">
-      <BarChart labels={statuses} data={counts} label="Participants by status" />
+      <BarChart labels={statuses} data={counts} label={`Participants by status (${view.getName()})`} />
     </div>
-  );
+  )
 }
