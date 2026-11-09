@@ -3,7 +3,7 @@ type: object
 required:
   - name
   - type
-  - defaultVisible
+  - isDefault
 properties:
   name:
     $ref: ../common/ColumnName.yaml
@@ -19,5 +19,6 @@ properties:
     description: The values of a categorical column.
     items:
       type: string
-  defaultVisible:
+  isDefault:
     type: boolean
+    description: Shown in the default view.
