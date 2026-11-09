@@ -1,21 +1,15 @@
 title: Problem
 type: object
-description: RFC 9457 problem details. Clients act on `type`, not on `title` or `detail`.
 required:
   - type
   - title
-  # - status
 properties:
   type:
     type: string
-    format: uri-reference
-    description: Stable identifier, written as `urn:rural-dashboard:problem:<name>`.
+    pattern: '^urn:problem:[a-z][a-z0-9-]*$'
+    description: Stable identifier for problems, written as `urn:problem:<name>`.
   title:
     type: string
-  # status:
-  #   type: integer
-  #   minimum: 400
-  #   maximum: 599
   detail:
     type: string
     description: Names the specific problem. Written for the end user.

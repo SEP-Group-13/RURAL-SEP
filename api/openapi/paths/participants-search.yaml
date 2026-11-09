@@ -4,8 +4,8 @@ get:
     - Participants
   summary: Search participants
   description: |
-    Matches the start of the participant ID. When the data source holds contact details,
-    names, email addresses and phone numbers that contain the text also match.
+    Matches the start of the participant ID. If the data source holds contact details,
+    names, email addresses and phone numbers, then they also match.
   x-urd:
     - URF 1.8
     - URF 2.7
@@ -13,7 +13,7 @@ get:
     - URF 3.5
     - URF 3.6
   parameters:
-    - name: q
+    - name: query
       in: query
       required: true
       schema:
@@ -24,7 +24,7 @@ get:
       schema:
         type: integer
         minimum: 1
-        maximum: 100
+        maximum: 250
         default: 25
   responses:
     '200':

@@ -84,8 +84,8 @@ export interface paths {
         };
         /**
          * Search participants
-         * @description Matches the start of the participant ID. When the data source holds contact details,
-         *     names, email addresses and phone numbers that contain the text also match.
+         * @description Matches the start of the participant ID. If the data source holds contact details,
+         *     names, email addresses and phone numbers, then they also match.
          */
         get: operations["searchParticipants"];
         put?: never;
@@ -217,15 +217,9 @@ export interface components {
             pointer: string;
             detail: string;
         };
-        /**
-         * Problem
-         * @description RFC 9457 problem details. Clients act on `type`, not on `title` or `detail`.
-         */
+        /** Problem */
         Problem: {
-            /**
-             * Format: uri-reference
-             * @description Stable identifier, written as `urn:rural-dashboard:problem:<name>`.
-             */
+            /** @description Stable identifier for problems, written as `urn:problem:<name>`. */
             type: string;
             title: string;
             /** @description Names the specific problem. Written for the end user. */
@@ -248,7 +242,8 @@ export interface components {
             type: "text" | "categorical" | "numeric";
             /** @description The values of a categorical column. */
             values?: string[];
-            defaultVisible: boolean;
+            /** @description Shown in the default view. */
+            isDefault: boolean;
         };
         /** ColumnList */
         ColumnList: {
@@ -451,14 +446,16 @@ export interface components {
             date: string;
             examElement: string | null;
             /** @enum {string} */
-            examType: "core" | "additional";
-            /** @description Name of the additional study. `null` for the core exam. */
+            examType: "core" | "auxiliary";
+            /** @description Name of the additional study. `null` for a core exam. */
             additionalStudy: string | null;
-            location: string | null;
             /** @enum {string} */
-            status: "completed" | "notCompleted";
+            type: "procedure" | "survey";
+            /** @enum {string|null} */
+            location: "completed" | "notCompleted" | null;
             durationMinutes: number | null;
             radiationMsv: number | null;
+            status: string;
         };
         /** ActivityList */
         ActivityList: {
@@ -651,7 +648,7 @@ export interface operations {
     searchParticipants: {
         parameters: {
             query: {
-                q: string;
+                query: string;
                 limit?: number;
             };
             header?: never;
