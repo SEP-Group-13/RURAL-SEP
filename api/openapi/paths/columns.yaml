@@ -1,0 +1,25 @@
+get:
+  operationId: listColumns
+  tags:
+    - Meta
+  summary: List the columns of the participant data table
+  description: Contact details are listed only when the data source holds them.
+  x-urd:
+    - URF 1.8
+    - URF 2.2
+    - URF 2.7
+    - URF 2.11
+    - URF 2.12
+    - URF 2.15
+    - URF 3.11
+    - URF 3.13
+    - URF 10.2
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/columns/ColumnList.yaml
+    '503':
+      $ref: ../components/responses/DataUnavailable.yaml

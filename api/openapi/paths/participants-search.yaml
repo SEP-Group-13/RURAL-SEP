@@ -1,0 +1,39 @@
+get:
+  operationId: searchParticipants
+  tags:
+    - Participants
+  summary: Search participants
+  description: |
+    Matches the start of the participant ID. When the data source holds contact details,
+    names, email addresses and phone numbers that contain the text also match.
+  x-urd:
+    - URF 1.8
+    - URF 2.7
+    - URF 3.2
+    - URF 3.5
+    - URF 3.6
+  parameters:
+    - name: q
+      in: query
+      required: true
+      schema:
+        type: string
+        minLength: 1
+    - name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/participants/ParticipantSearchResult.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '503':
+      $ref: ../components/responses/DataUnavailable.yaml
