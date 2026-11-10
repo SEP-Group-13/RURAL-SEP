@@ -1,0 +1,24 @@
+title: ParticipantSearchResult
+type: object
+required:
+  - total
+  - participants
+properties:
+  total:
+    type: integer
+    minimum: 0
+    description: Number of matches, which can exceed `limit`.
+  participants:
+    type: array
+    items:
+      type: object
+      required:
+        - participantId
+        - name
+      properties:
+        participantId:
+          type: string
+        name:
+          type:
+            - string
+            - 'null'

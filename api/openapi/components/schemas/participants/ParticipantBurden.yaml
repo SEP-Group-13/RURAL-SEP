@@ -1,0 +1,21 @@
+title: ParticipantBurden
+type: object
+required:
+  - cumulative
+  - perYear
+properties:
+  cumulative:
+    $ref: BurdenSummary.yaml
+  perYear:
+    type: array
+    description: Ascending by year.
+    items:
+      type: object
+      required:
+        - year
+        - burden
+      properties:
+        year:
+          type: integer
+        burden:
+          $ref: BurdenSummary.yaml

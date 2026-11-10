@@ -1,0 +1,9 @@
+title: BurdenPresets
+type: object
+required:
+  - presets
+properties:
+  presets:
+    type: array
+    items:
+      $ref: BurdenPreset.yaml

@@ -1,0 +1,24 @@
+title: Column
+type: object
+required:
+  - name
+  - type
+  - isDefault
+properties:
+  name:
+    $ref: ../common/ColumnName.yaml
+  type:
+    type: string
+    description: Categorical columns have a fixed set of values.
+    enum:
+      - text
+      - categorical
+      - numeric
+  values:
+    type: array
+    description: The values of a categorical column.
+    items:
+      type: string
+  isDefault:
+    type: boolean
+    description: Shown in the default view.
