@@ -1,16 +1,54 @@
-import type { DatasetInfo } from '../types/dataset'
-import type { Participant, ParticipantDetails } from '../types/participant'
-import type { RowPage, ViewRow } from '../types/rows'
-import type { ViewQuery } from '../types/view'
+import type {
+  ApiActivity,
+  ApiColumn,
+  ApiMeta,
+  ApiParticipant,
+  BurdenPreset,
+  CountChartRequest,
+  CountChartResponse,
+  HistogramRequest,
+  HistogramResponse,
+  ParticipantBurden,
+  ParticipantPage,
+  ParticipantSearchResult,
+  QueryParticipantsRequest,
+} from './apiTypes'
 
+/**
+ * One method per operation in the OpenAPI spec, using the spec's own types.
+ *
+ * This layer only transports data: it does not translate to the UI's types (that is the job of
+ * the mappers). List wrappers such as `{ columns: [...] }` are unwrapped here.
+ * Every method rejects with an `ApiError` on failure.
+ */
 export interface ApiConsumer {
-  getDatasetInfo(): Promise<DatasetInfo>
+  /** GET /meta */
+  getMeta(): Promise<ApiMeta>
 
-  getParticipant(participantId: string): Promise<ParticipantDetails>
+  /** GET /columns, in default display order */
+  listColumns(): Promise<ApiColumn[]>
 
-  getAllParticipants(): Promise<Participant[]>
+  /** GET /burden-presets */
+  getBurdenPresets(): Promise<BurdenPreset[]>
 
-  getPageParticipants(pageSize: number, pageNumber: number, query: ViewQuery): Promise<RowPage>
+  /** POST /participants/query */
+  queryParticipants(body: QueryParticipantsRequest): Promise<ParticipantPage>
 
-  getAllParticipantRows(query: ViewQuery): Promise<ViewRow[]>
+  /** GET /participants/search */
+  searchParticipants(query: string, limit?: number): Promise<ParticipantSearchResult>
+
+  /** GET /participants/{participantId} */
+  getParticipant(participantId: string): Promise<ApiParticipant>
+
+  /** GET /participants/{participantId}/burden */
+  getParticipantBurden(participantId: string): Promise<ParticipantBurden>
+
+  /** GET /participants/{participantId}/activities, ascending by date */
+  listParticipantActivities(participantId: string): Promise<ApiActivity[]>
+
+  /** POST /charts/counts */
+  queryChartCounts(body: CountChartRequest): Promise<CountChartResponse>
+
+  /** POST /charts/histogram */
+  queryChartHistogram(body: HistogramRequest): Promise<HistogramResponse>
 }

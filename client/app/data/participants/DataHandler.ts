@@ -1,4 +1,4 @@
-import type { ApiConsumer } from '../api/ApiConsumer'
+import type { LegacyApiConsumer } from '../api/LegacyApiConsumer'
 import { createDefaultColumns } from '../columns/defaultColumns'
 import type { RowSource } from '../rowSources/RowSource'
 import type { DatasetInfo } from '../types/dataset'
@@ -11,10 +11,10 @@ export interface SearchResult {
 }
 
 export class DataHandler {
-  private api: ApiConsumer
+  private api: LegacyApiConsumer
   private rowSource: RowSource
 
-  constructor(api: ApiConsumer, rowSource: RowSource) {
+  constructor(api: LegacyApiConsumer, rowSource: RowSource) {
     this.api = api
     this.rowSource = rowSource
   }

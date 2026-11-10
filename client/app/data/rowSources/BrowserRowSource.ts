@@ -1,4 +1,4 @@
-import type { ApiConsumer } from '../api/ApiConsumer'
+import type { LegacyApiConsumer } from '../api/LegacyApiConsumer'
 import { getPageOfRows, runPipeline } from '../pipeline/runPipeline'
 import type { Participant } from '../types/participant'
 import type { RowPage, ViewRow } from '../types/rows'
@@ -6,10 +6,10 @@ import type { ViewQuery } from '../types/view'
 import type { RowSource } from './RowSource'
 
 export class BrowserRowSource implements RowSource {
-  private api: ApiConsumer
+  private api: LegacyApiConsumer
   private participants: Promise<Participant[]> | null = null
 
-  constructor(api: ApiConsumer) {
+  constructor(api: LegacyApiConsumer) {
     this.api = api
   }
 

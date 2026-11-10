@@ -1,4 +1,4 @@
-import type { ApiConsumer } from './api/ApiConsumer'
+import type { LegacyApiConsumer } from './api/LegacyApiConsumer'
 import { mockApi } from './api/mockApi'
 import { DataHandler } from './participants/DataHandler'
 import { BrowserRowSource } from './rowSources/BrowserRowSource'
@@ -7,7 +7,7 @@ import { addDemoViews } from './views/demoViews'
 import { ViewHandler } from './views/ViewHandler'
 import { createBrowserViewStorage } from './views/viewStorage'
 
-export const api: ApiConsumer = mockApi
+export const api: LegacyApiConsumer = mockApi
 
 export const rowSource: RowSource = new BrowserRowSource(api)
 

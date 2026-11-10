@@ -4,7 +4,7 @@ import type { DatasetInfo } from '../types/dataset'
 import type { Participant, ParticipantDetails } from '../types/participant'
 import type { RowPage, ViewRow } from '../types/rows'
 import type { ViewQuery } from '../types/view'
-import type { ApiConsumer } from './ApiConsumer'
+import type { LegacyApiConsumer } from './LegacyApiConsumer'
 import { ApiError } from './ApiError'
 import { MOCK_DATABASE } from './mockDatabase'
 import { buildAllParticipantDetails } from './mockServer'
@@ -24,7 +24,7 @@ export const mockApiControls = {
   },
 }
 
-export const mockApi: ApiConsumer = {
+export const mockApi: LegacyApiConsumer = {
   getDatasetInfo(): Promise<DatasetInfo> {
     return fakeRequest(() => buildDatasetInfo())
   },
