@@ -1,29 +1,36 @@
-import type { ApiConsumer } from './ApiConsumer'
+import type { ApiConsumer, RequestOptions } from './ApiConsumer'
 import { call, http } from './httpClient'
 
-const participantPath = (participantId: string) => ({ params: { path: { participantId } } })
+const participantPath = (participantId: string, options?: RequestOptions) => ({
+  params: { path: { participantId } },
+  signal: options?.signal,
+})
 
 /** ApiConsumer that talks to the real server (or to MSW in development). */
 export const httpApi: ApiConsumer = {
-  getMeta: () => call(http.GET('/meta')),
+  getMeta: (options) => call(http.GET('/meta', { signal: options?.signal })),
 
-  listColumns: async () => (await call(http.GET('/columns'))).columns,
+  listColumns: async (options) => (await call(http.GET('/columns', { signal: options?.signal }))).columns,
 
-  getBurdenPresets: async () => (await call(http.GET('/burden-presets'))).presets,
+  getBurdenPresets: async (options) =>
+    (await call(http.GET('/burden-presets', { signal: options?.signal }))).presets,
 
-  queryParticipants: (body) => call(http.POST('/participants/query', { body })),
+  queryParticipants: (body, options) => call(http.POST('/participants/query', { body, signal: options?.signal })),
 
-  searchParticipants: (query, limit) => call(http.GET('/participants/search', { params: { query: { query, limit } } })),
+  searchParticipants: (query, limit, options) =>
+    call(http.GET('/participants/search', { params: { query: { query, limit } }, signal: options?.signal })),
 
-  getParticipant: (participantId) => call(http.GET('/participants/{participantId}', participantPath(participantId))),
+  getParticipant: (participantId, options) =>
+    call(http.GET('/participants/{participantId}', participantPath(participantId, options))),
 
-  getParticipantBurden: (participantId) =>
-    call(http.GET('/participants/{participantId}/burden', participantPath(participantId))),
+  getParticipantBurden: (participantId, options) =>
+    call(http.GET('/participants/{participantId}/burden', participantPath(participantId, options))),
 
-  listParticipantActivities: async (participantId) =>
-    (await call(http.GET('/participants/{participantId}/activities', participantPath(participantId)))).activities,
+  listParticipantActivities: async (participantId, options) =>
+    (await call(http.GET('/participants/{participantId}/activities', participantPath(participantId, options))))
+      .activities,
 
-  queryChartCounts: (body) => call(http.POST('/charts/counts', { body })),
+  queryChartCounts: (body, options) => call(http.POST('/charts/counts', { body, signal: options?.signal })),
 
-  queryChartHistogram: (body) => call(http.POST('/charts/histogram', { body })),
+  queryChartHistogram: (body, options) => call(http.POST('/charts/histogram', { body, signal: options?.signal })),
 }

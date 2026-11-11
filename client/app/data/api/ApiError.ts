@@ -66,6 +66,15 @@ export function createNetworkError(): ApiError {
   return new ApiError('network', FALLBACK_MESSAGES.network)
 }
 
+/**
+ * True for the error fetch throws when its request was aborted through an AbortSignal.
+ * An abort is not a failure: the caller no longer wants the response, so nothing should be shown.
+ * (Aborting with a custom reason makes fetch throw that reason instead; abort without one.)
+ */
+export function isAbortError(error: unknown): boolean {
+  return error instanceof Error && error.name === 'AbortError'
+}
+
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message

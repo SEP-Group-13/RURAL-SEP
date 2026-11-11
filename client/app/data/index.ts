@@ -22,7 +22,7 @@ if (isFirstVisit) {
   addDemoViews(viewHandler)
 }
 
-export { ApiError, getErrorMessage } from './api/ApiError'
+export { ApiError, getErrorMessage, isAbortError } from './api/ApiError'
 export { mockApiControls } from './api/mockApi'
 export { getCategoryOptions, isBandColumnEdited } from './columns/columnHelpers'
 export { PREDEFINED_FORMULAS } from './columns/predefinedFormulas'
@@ -42,7 +42,7 @@ export { View } from './views/View'
 export { ViewHandler } from './views/ViewHandler'
 
 export type { ApiErrorKind } from './api/ApiError'
-export type { ApiConsumer } from './api/ApiConsumer'
+export type { ApiConsumer, RequestOptions } from './api/ApiConsumer'
 export type { PredefinedFormulaName } from './columns/predefinedFormulas'
 export type { SearchResult } from './participants/DataHandler'
 export type { LoadResult, LoadState } from './react/useView'
