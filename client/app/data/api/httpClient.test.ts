@@ -35,24 +35,11 @@ describe('isAbortError', () => {
 describe('httpApi', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
-    vi.resetModules()
   })
 
-  /**
-   * openapi-fetch reads the global fetch and Request when the client is created, so stub them
-   * before importing. Node's Request rejects relative URLs like `/api/v1/meta`; a browser resolves
-   * them against the page, so the stub resolves them against a fake origin.
-   */
+  /** The client looks fetch up per request, so stubbing it is enough (relative URLs: see test/setup.ts). */
   async function importWithFetch(fetch: (request: Request) => Promise<Response>) {
-    const NodeRequest = globalThis.Request
-    class BrowserLikeRequest extends NodeRequest {
-      constructor(input: RequestInfo | URL, init?: RequestInit) {
-        super(typeof input === 'string' ? new URL(input, 'http://localhost') : input, init)
-      }
-    }
-    vi.stubGlobal('Request', BrowserLikeRequest)
     vi.stubGlobal('fetch', vi.fn(fetch))
-    vi.resetModules()
     return (await import('./HttpApi')).httpApi
   }
 

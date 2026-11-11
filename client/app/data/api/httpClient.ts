@@ -9,7 +9,12 @@ export const API_BASE_URL = '/api/v1'
  * Typed HTTP client generated from the OpenAPI spec. Paths, parameters, request bodies and
  * responses are all checked against `shared/api/generated/api.d.ts` at compile time.
  */
-export const http = createClient<paths>({ baseUrl: API_BASE_URL })
+export const http = createClient<paths>({
+  baseUrl: API_BASE_URL,
+  // Look fetch up per request (not once at startup), so tools that replace it later, such as the
+  // API mock in tests, are used.
+  fetch: (request) => globalThis.fetch(request),
+})
 
 interface ClientResult<T> {
   data?: T
