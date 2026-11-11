@@ -1,5 +1,5 @@
 import type { LegacyApiConsumer } from '../api/LegacyApiConsumer'
-import { getPageOfRows, runPipeline } from '../pipeline/runPipeline'
+import { getPageOfRows, runPipeline } from '../../mocks/pipeline/runPipeline'
 import type { Participant } from '../types/participant'
 import type { RowPage, ViewRow } from '../types/rows'
 import type { ViewQuery } from '../types/view'

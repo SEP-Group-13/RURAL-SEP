@@ -1,10 +1,10 @@
-import type { Column } from '../types/column'
-import type { Participant, YearlyMetric, YearlyTotals } from '../types/participant'
-import type { CellValue, ViewRow } from '../types/rows'
-import type { ViewQuery, YearSelection } from '../types/view'
-import { findBandLabel } from './bands'
-import { evaluateFormula, parseFormula } from './formula'
-import type { FormulaNode } from './formula'
+import type { Column } from '../../data/types/column'
+import type { Participant, YearlyMetric, YearlyTotals } from '../../data/types/participant'
+import type { CellValue, ViewRow } from '../../data/types/rows'
+import type { ViewQuery, YearSelection } from '../../data/types/view'
+import { findBandLabel } from './matching'
+import { evaluateFormula, parseFormula } from '../../data/pipeline/formula'
+import type { FormulaNode } from '../../data/pipeline/formula'
 
 export function computeRow(participant: Participant, query: ViewQuery): ViewRow {
   const cells: Record<string, CellValue> = {}

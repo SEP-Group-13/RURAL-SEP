@@ -1,8 +1,8 @@
-import type { Participant } from '../types/participant'
-import type { RowPage, ViewRow } from '../types/rows'
-import type { ViewQuery } from '../types/view'
+import type { Participant } from '../../data/types/participant'
+import type { RowPage, ViewRow } from '../../data/types/rows'
+import type { ViewQuery } from '../../data/types/view'
 import { computeRow } from './computeRow'
-import { matchesAllFilters } from './filters'
+import { matchesAllFilters } from './matching'
 import { sortRows } from './sorting'
 
 export function runPipeline(participants: Participant[], query: ViewQuery): ViewRow[] {

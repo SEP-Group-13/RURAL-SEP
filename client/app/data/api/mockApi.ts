@@ -1,13 +1,13 @@
 import { MOCK_DELAY_MS } from '../config'
-import { getPageOfRows, runPipeline } from '../pipeline/runPipeline'
+import { getPageOfRows, runPipeline } from '../../mocks/pipeline/runPipeline'
 import type { DatasetInfo } from '../types/dataset'
 import type { Participant, ParticipantDetails } from '../types/participant'
 import type { RowPage, ViewRow } from '../types/rows'
 import type { ViewQuery } from '../types/view'
 import type { LegacyApiConsumer } from './LegacyApiConsumer'
 import { ApiError } from './ApiError'
-import { MOCK_DATABASE } from './mockDatabase'
-import { buildAllParticipantDetails } from './mockServer'
+import { MOCK_DATABASE } from '../../mocks/data/mockDatabase'
+import { buildAllParticipantDetails } from '../../mocks/data/mockServer'
 
 const MOCK_PARTICIPANTS = buildAllParticipantDetails(MOCK_DATABASE)
 
