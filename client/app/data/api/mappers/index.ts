@@ -1,3 +1,10 @@
+export {
+  fromCountChartResponse,
+  fromHistogramResponse,
+  MAX_CHART_VIEWS,
+  toCountChartRequest,
+  toHistogramRequest,
+} from './charts'
 export { toDatasetInfo } from './dataset'
 export { formatFormula, rewriteFormulaReferences } from './formula'
 export { MappingError } from './MappingError'
