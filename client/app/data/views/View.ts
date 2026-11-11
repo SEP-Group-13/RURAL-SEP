@@ -1,3 +1,4 @@
+import type { RequestOptions } from '../api/ApiConsumer'
 import { createUniqueKey, isLabelInUse } from '../columns/columnHelpers'
 import { PREDEFINED_FORMULAS } from '../columns/predefinedFormulas'
 import type { PredefinedFormulaName } from '../columns/predefinedFormulas'
@@ -78,8 +79,8 @@ export class View {
     return getQueryFromSettings(this.settings)
   }
 
-  getPage(pageNumber: number): Promise<RowPage> {
-    return this.rowSource.getPage(PAGE_SIZE, pageNumber, this.toQuery())
+  getPage(pageNumber: number, options?: RequestOptions): Promise<RowPage> {
+    return this.rowSource.getPage(PAGE_SIZE, pageNumber, this.toQuery(), options)
   }
 
   getAllRows(): Promise<ViewRow[]> {

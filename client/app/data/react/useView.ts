@@ -12,8 +12,8 @@ import { buildRequest, requestKey, useDataRequest } from './useDataRequest'
 import type { LoadResult } from './useDataRequest'
 
 // The data hooks below all go through useDataRequest; see that file for how to add one.
-// TODO(Part C, C3): pass the signal on once View.getPage / DataHandler accept it; until then an
-// outdated request is ignored but not aborted.
+// TODO(Part C, C5): pass the signal on once DataHandler accepts it; until then an outdated
+// dataset or participant request is ignored but not aborted.
 
 export function useViewHandlerState(viewHandler: ViewHandler): ViewHandlerState {
   const subscribe = useCallback((listener: () => void) => viewHandler.subscribe(listener), [viewHandler])
@@ -34,7 +34,7 @@ export function useViewPage(view: View, pageNumber: number): LoadResult<RowPage>
     () =>
       buildRequest(
         () => toQueryParticipantsRequest(view.toQuery(), pageNumber, PAGE_SIZE).body,
-        () => view.getPage(pageNumber),
+        (_body, signal) => view.getPage(pageNumber, { signal }),
       ),
     [view, settings, pageNumber],
   )
