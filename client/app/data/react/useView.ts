@@ -15,8 +15,6 @@ import { buildRequest, requestKey, useDataRequest } from './useDataRequest'
 import type { LoadResult } from './useDataRequest'
 
 // The data hooks below all go through useDataRequest; see that file for how to add one.
-// TODO(Part C, C5): pass the signal on once DataHandler accepts it; until then an outdated
-// dataset or participant request is ignored but not aborted.
 
 export function useViewHandlerState(viewHandler: ViewHandler): ViewHandlerState {
   const subscribe = useCallback((listener: () => void) => viewHandler.subscribe(listener), [viewHandler])
@@ -131,14 +129,17 @@ export function useViewRows(view: View): LoadResult<ViewRow[]> {
 }
 
 /** GET /meta + /columns: data source mode, years, contact fields and category values. */
-export function useDatasetInfo(dataHandler: DataHandler): LoadResult<DatasetInfo> {
-  return useDataRequest({ key: 'datasetInfo', run: () => dataHandler.getDatasetInfo() })
+export function useDatasetInfo(dataHandler: Pick<DataHandler, 'getDatasetInfo'>): LoadResult<DatasetInfo> {
+  return useDataRequest({ key: 'datasetInfo', run: (signal) => dataHandler.getDatasetInfo({ signal }) })
 }
 
 /** Profile, burden summary and activities of one participant. */
-export function useParticipantDetails(dataHandler: DataHandler, participantId: string): LoadResult<ParticipantDetails> {
+export function useParticipantDetails(
+  dataHandler: Pick<DataHandler, 'getParticipant'>,
+  participantId: string,
+): LoadResult<ParticipantDetails> {
   return useDataRequest({
     key: requestKey(['participant', participantId]),
-    run: () => dataHandler.getParticipant(participantId),
+    run: (signal) => dataHandler.getParticipant(participantId, { signal }),
   })
 }

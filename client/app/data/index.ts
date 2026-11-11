@@ -2,7 +2,7 @@ import { httpApi } from './api/HttpApi'
 import type { LegacyApiConsumer } from './api/LegacyApiConsumer'
 import { ChartHandler } from './charts/ChartHandler'
 import { mockApi } from './api/mockApi'
-import { DataHandler } from './participants/DataHandler'
+import { LegacyDataHandler } from './participants/LegacyDataHandler'
 import { BrowserRowSource } from './rowSources/BrowserRowSource'
 import type { RowSource } from './rowSources/RowSource'
 import { addDemoViews } from './views/demoViews'
@@ -13,7 +13,8 @@ export const api: LegacyApiConsumer = mockApi
 
 export const rowSource: RowSource = new BrowserRowSource(api)
 
-export const dataHandler = new DataHandler(api, rowSource)
+/** Becomes `new DataHandler(httpApi)` once the API mock answers /api/v1. */
+export const dataHandler = new LegacyDataHandler(api, rowSource)
 
 /** Chart data from the API. Needs a server or the API mock to answer /api/v1. */
 export const chartHandler = new ChartHandler(httpApi)
@@ -55,10 +56,12 @@ export { ViewHandler } from './views/ViewHandler'
 export type { ApiErrorKind } from './api/ApiError'
 export type { ApiConsumer, RequestOptions } from './api/ApiConsumer'
 export type { PredefinedFormulaName } from './columns/predefinedFormulas'
-export type { SearchResult } from './participants/DataHandler'
+export { DataHandler } from './participants/DataHandler'
+export type { SearchResult, SearchResults } from './participants/DataHandler'
 export type { DataRequest, LoadErrorKind, LoadResult, LoadState } from './react/useDataRequest'
 export type { RowSource } from './rowSources/RowSource'
 export type { Band, PresetBandName } from './types/band'
+export type { BurdenPreset } from './types/burden'
 export type { ChartBucket, ChartCounts, CountSeries, Histogram, HistogramBin, HistogramSeries } from './types/charts'
 export type { Column, ColumnDataType, ColumnGroup, ColumnSource } from './types/column'
 export type { DatasetInfo, DataSourceMode } from './types/dataset'
