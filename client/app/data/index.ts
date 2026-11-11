@@ -30,9 +30,10 @@ export { getPresetBands } from './columns/presetBands'
 export { MAX_OPEN_VIEWS, PAGE_SIZE } from './config'
 export { getFilterOperatorFor } from './pipeline/filters'
 export { validateFormula } from './pipeline/formula'
+export { buildRequest, failedRequest, getLatestData, requestKey, useDataRequest } from './react/useDataRequest'
 export {
-  getLatestData,
   useDatasetInfo,
+  useParticipantDetails,
   useViewHandlerState,
   useViewPage,
   useViewRows,
@@ -45,7 +46,7 @@ export type { ApiErrorKind } from './api/ApiError'
 export type { ApiConsumer, RequestOptions } from './api/ApiConsumer'
 export type { PredefinedFormulaName } from './columns/predefinedFormulas'
 export type { SearchResult } from './participants/DataHandler'
-export type { LoadResult, LoadState } from './react/useView'
+export type { DataRequest, LoadErrorKind, LoadResult, LoadState } from './react/useDataRequest'
 export type { RowSource } from './rowSources/RowSource'
 export type { Band, PresetBandName } from './types/band'
 export type { Column, ColumnDataType, ColumnGroup, ColumnSource } from './types/column'
