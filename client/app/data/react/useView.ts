@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useRef, useSyncExternalStore } from 'react'
 import { toCountChartRequest, toHistogramRequest } from '../api/mappers/charts'
-import { toApiView, toQueryParticipantsRequest } from '../api/mappers/view'
+import { toQueryParticipantsRequest } from '../api/mappers/view'
 import type { ChartHandler } from '../charts/ChartHandler'
 import { PAGE_SIZE } from '../config'
 import type { ChartCounts, Histogram } from '../types/charts'
 import type { DataHandler } from '../participants/DataHandler'
 import type { DatasetInfo } from '../types/dataset'
 import type { ParticipantDetails } from '../types/participant'
-import type { RowPage, ViewRow } from '../types/rows'
+import type { RowPage } from '../types/rows'
 import type { ViewSettings } from '../types/view'
 import type { View } from '../views/View'
 import type { ViewHandler, ViewHandlerState } from '../views/ViewHandler'
@@ -107,23 +107,6 @@ export function useViewPage(view: View, pageNumber: number): LoadResult<RowPage>
         (_body, signal) => view.getPage(pageNumber, { signal }),
       ),
     [view, settings, pageNumber],
-  )
-  return useDataRequest(request)
-}
-
-/**
- * @deprecated Loads every row of the view. Use useChartCounts / useHistogram instead; kept until
- * the visualization page moves to them.
- */
-export function useViewRows(view: View): LoadResult<ViewRow[]> {
-  const settings = useViewSettings(view)
-  const request = useMemo(
-    () =>
-      buildRequest(
-        () => toApiView(view.toQuery()),
-        () => view.getAllRows(),
-      ),
-    [view, settings],
   )
   return useDataRequest(request)
 }

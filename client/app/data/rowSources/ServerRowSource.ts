@@ -1,7 +1,6 @@
 import type { ApiConsumer, RequestOptions } from '../api/ApiConsumer'
 import { fromParticipantPage, toQueryParticipantsRequest } from '../api/mappers'
-import type { ParticipantRowPage } from '../api/mappers'
-import type { ViewRow } from '../types/rows'
+import type { RowPage } from '../types/rows'
 import type { ViewQuery } from '../types/view'
 import type { RowSource } from './RowSource'
 
@@ -25,19 +24,9 @@ export class ServerRowSource implements RowSource {
     pageNumber: number,
     query: ViewQuery,
     options?: RequestOptions,
-  ): Promise<ParticipantRowPage> {
+  ): Promise<RowPage> {
     const { body, names } = toQueryParticipantsRequest(query, pageNumber, pageSize)
     const page = await this.api.queryParticipants(body, options)
     return fromParticipantPage(page, names)
   }
-
-  /** @deprecated See RowSource.getAllRows. The API cannot return every row of a view. */
-  getAllRows(_query: ViewQuery): Promise<ViewRow[]> {
-    return Promise.reject(
-      new Error('Loading all rows of a view is not supported by the API. Use the chart endpoints instead.'),
-    )
-  }
-
-  /** Nothing to reload: every request reads the latest data from the server. */
-  async reload(): Promise<void> {}
 }

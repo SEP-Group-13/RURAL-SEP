@@ -1,23 +1,24 @@
+import type { ApiConsumer } from './api/ApiConsumer'
 import { httpApi } from './api/HttpApi'
-import type { LegacyApiConsumer } from './api/LegacyApiConsumer'
 import { ChartHandler } from './charts/ChartHandler'
-import { mockApi } from './api/mockApi'
-import { LegacyDataHandler } from './participants/LegacyDataHandler'
-import { BrowserRowSource } from './rowSources/BrowserRowSource'
+import { DataHandler } from './participants/DataHandler'
 import type { RowSource } from './rowSources/RowSource'
+import { ServerRowSource } from './rowSources/ServerRowSource'
 import { addDemoViews } from './views/demoViews'
 import { ViewHandler } from './views/ViewHandler'
 import { createBrowserViewStorage } from './views/viewStorage'
 
-export const api: LegacyApiConsumer = mockApi
+/**
+ * All data comes from /api/v1: the server computes rows and charts, the browser only sends view
+ * settings and shows the results. In development the API mock answers (VITE_MOCK_API, app/mocks).
+ */
+export const api: ApiConsumer = httpApi
 
-export const rowSource: RowSource = new BrowserRowSource(api)
+export const rowSource: RowSource = new ServerRowSource(api)
 
-/** Becomes `new DataHandler(httpApi)` once the API mock answers /api/v1. */
-export const dataHandler = new LegacyDataHandler(api, rowSource)
+export const dataHandler = new DataHandler(api)
 
-/** Chart data from the API. Needs a server or the API mock to answer /api/v1. */
-export const chartHandler = new ChartHandler(httpApi)
+export const chartHandler = new ChartHandler(api)
 
 const viewStorage = createBrowserViewStorage()
 const isFirstVisit = viewStorage.loadOpenViews() === null
@@ -29,7 +30,6 @@ if (isFirstVisit) {
 }
 
 export { ApiError, getErrorMessage, isAbortError } from './api/ApiError'
-export { mockApiControls } from './api/mockApi'
 export { getCategoryOptions, isBandColumnEdited } from './columns/columnHelpers'
 export { PREDEFINED_FORMULAS } from './columns/predefinedFormulas'
 export { getPresetBands } from './columns/presetBands'
@@ -38,6 +38,7 @@ export { getFilterOperatorFor } from './pipeline/filters'
 export { validateFormula } from './pipeline/formula'
 export { buildRequest, failedRequest, getLatestData, requestKey, useDataRequest } from './react/useDataRequest'
 export { MAX_CHART_VIEWS } from './api/mappers/charts'
+export { bandCellKey } from './api/mappers/rows'
 export { ChartHandler } from './charts/ChartHandler'
 export {
   useChartCounts,
@@ -46,7 +47,6 @@ export {
   useParticipantDetails,
   useViewHandlerState,
   useViewPage,
-  useViewRows,
   useViewSettings,
   useViewsSettings,
 } from './react/useView'

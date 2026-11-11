@@ -10,10 +10,8 @@ export function bandCellKey(bandColumnKey: string, year: number): string {
   return `${bandColumnKey}:${year}`
 }
 
-export interface ParticipantRowPage extends RowPage {
-  /** For each band column key, the years the server returned, in column order. */
-  bandYears: Record<string, number[]>
-}
+/** The table page built from POST /participants/query (RowPage now carries `bandYears` itself). */
+export type ParticipantRowPage = RowPage
 
 /**
  * Turns a page from POST /participants/query into the table's RowPage, with cells keyed by

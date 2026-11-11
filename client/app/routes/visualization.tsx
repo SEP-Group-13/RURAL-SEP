@@ -1,26 +1,32 @@
 import { useMemo } from 'react'
+import Button from '~/components/Button/Button'
 import BarChart from '~/components/charts/BarChart'
-import { useViewHandlerState, useViewRows, viewHandler } from '~/data'
-
-const statuses = ['Active', 'Completed', 'Dropped Out']
+import { chartHandler, getLatestData, useChartCounts, useViewHandlerState, viewHandler } from '~/data'
 
 export default function VisualizationRoute() {
   useViewHandlerState(viewHandler)
   const view = viewHandler.getActiveView()
-  const { state } = useViewRows(view)
-  const rows = state.status === 'ready' ? state.data : null
+  const { state, retry } = useChartCounts(chartHandler, [view], 'studyStatus')
+  const counts = getLatestData(state)
 
-  const counts = useMemo(
-    () => statuses.map((status) => (rows ?? []).filter((row) => row.cells.studyStatus === status).length),
-    [rows],
-  )
+  // The server lists every status, also those with a count of 0.
+  const buckets = counts?.series[0]?.buckets
+  const labels = useMemo(() => buckets?.map((bucket) => bucket.label) ?? [], [buckets])
+  const data = useMemo(() => buckets?.map((bucket) => bucket.count) ?? [], [buckets])
 
-  if (state.status === 'error') return <p className="p-4">Could not load participants: {state.error}</p>
-  if (rows === null) return <p className="p-4">Loading…</p>
+  if (state.status === 'error') {
+    return (
+      <div className="p-4 flex items-center gap-3">
+        <p>Could not load the chart: {state.error}</p>
+        <Button onClick={retry}>Retry</Button>
+      </div>
+    )
+  }
+  if (counts === null) return <p className="p-4">Loading…</p>
 
   return (
     <div className="p-4 max-w-3xl">
-      <BarChart labels={statuses} data={counts} label={`Participants by status (${view.getName()})`} />
+      <BarChart labels={labels} data={data} label={`Participants by status (${view.getName()})`} />
     </div>
   )
 }

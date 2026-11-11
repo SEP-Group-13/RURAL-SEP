@@ -1,5 +1,5 @@
 import type { Participant } from '../../data/types/participant'
-import type { RowPage, ViewRow } from '../../data/types/rows'
+import type { ViewRow } from '../../data/types/rows'
 import type { ViewQuery } from '../../data/types/view'
 import { computeRow } from './computeRow'
 import { matchesAllFilters } from './matching'
@@ -16,17 +16,3 @@ export function runPipeline(participants: Participant[], query: ViewQuery): View
   return sortRows(matchingRows, query.sort)
 }
 
-export function getPageOfRows(rows: ViewRow[], pageNumber: number, pageSize: number): RowPage {
-  const totalRows = rows.length
-  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize))
-  const safePageNumber = Math.min(Math.max(1, Math.floor(pageNumber)), totalPages)
-  const start = (safePageNumber - 1) * pageSize
-
-  return {
-    rows: rows.slice(start, start + pageSize),
-    pageNumber: safePageNumber,
-    pageSize,
-    totalRows,
-    totalPages,
-  }
-}

@@ -13,7 +13,7 @@ import type { Column } from '../types/column'
 import type { Filter } from '../types/filter'
 import { failure, success } from '../types/result'
 import type { ActionResult } from '../types/result'
-import type { RowPage, ViewRow } from '../types/rows'
+import type { RowPage } from '../types/rows'
 import type { SortDirection, SortRule, ViewQuery, ViewSettings, YearSelection } from '../types/view'
 import { getQueryFromSettings } from './viewSettings'
 
@@ -81,10 +81,6 @@ export class View {
 
   getPage(pageNumber: number, options?: RequestOptions): Promise<RowPage> {
     return this.rowSource.getPage(PAGE_SIZE, pageNumber, this.toQuery(), options)
-  }
-
-  getAllRows(): Promise<ViewRow[]> {
-    return this.rowSource.getAllRows(this.toQuery())
   }
 
   showColumn(columnKey: string): ActionResult {
