@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx watch --tsconfig tsconfig.json src/app.ts",
     "build": "tsup --config tsup.config.ts",
-    "start": "NODE_ENV=production node ../dist/server/app.js"
+    "start": "NODE_ENV=production node ../dist/server/app.js",
+    "test": "tsx --tsconfig tsconfig.json --test \"src/**/*.test.ts\" \"../shared/**/*.test.ts\""
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
