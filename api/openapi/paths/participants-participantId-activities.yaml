@@ -1,0 +1,24 @@
+parameters:
+  - $ref: ../components/parameters/ParticipantId.yaml
+get:
+  operationId: listParticipantActivities
+  tags:
+    - Participants
+  summary: List the activities of a participant
+  x-urd:
+    - URF 1.8
+    - URF 4.12
+    - URF 4.13
+    - URF 4.14
+    - URF 4.15
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/participants/ActivityList.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '503':
+      $ref: ../components/responses/DataUnavailable.yaml

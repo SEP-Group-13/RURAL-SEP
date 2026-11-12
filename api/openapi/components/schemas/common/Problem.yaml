@@ -1,0 +1,20 @@
+title: Problem
+type: object
+required:
+  - type
+  - title
+properties:
+  type:
+    type: string
+    pattern: '^urn:problem:[a-z][a-z0-9-]*$'
+    description: Stable identifier for problems, written as `urn:problem:<name>`.
+  title:
+    type: string
+  detail:
+    type: string
+    description: Names the specific problem. Written for the end user.
+  errors:
+    type: array
+    description: Invalid request fields. Present on status 422 only.
+    items:
+      $ref: ProblemFieldError.yaml

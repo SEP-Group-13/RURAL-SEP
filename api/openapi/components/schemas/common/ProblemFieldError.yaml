@@ -1,0 +1,12 @@
+title: ProblemFieldError
+type: object
+required:
+  - pointer
+  - detail
+properties:
+  pointer:
+    type: string
+    format: json-pointer
+    description: Location of the invalid value in the request body.
+  detail:
+    type: string

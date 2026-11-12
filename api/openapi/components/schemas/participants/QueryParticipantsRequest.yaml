@@ -1,0 +1,21 @@
+title: QueryParticipantsRequest
+type: object
+additionalProperties: false
+required:
+  - view
+  - columns
+properties:
+  view:
+    $ref: ../view/View.yaml
+  columns:
+    type: array
+    minItems: 1
+    description: |
+      Columns to return, in display order. A band column without a year stands for one column
+      per selected year, returned as `<column> band <year>`.
+    items:
+      $ref: ../common/ColumnName.yaml
+  sort:
+    $ref: Sort.yaml
+  page:
+    $ref: ../common/PageRequest.yaml

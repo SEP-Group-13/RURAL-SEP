@@ -1,0 +1,26 @@
+title: ParticipantPage
+type: object
+required:
+  - total
+  - page
+  - pageSize
+  - columns
+  - rows
+properties:
+  total:
+    type: integer
+    minimum: 0
+    description: Number of participants in the view, over all pages.
+  page:
+    type: integer
+  pageSize:
+    type: integer
+  columns:
+    type: array
+    description: Returned columns in order, with band columns expanded per year.
+    items:
+      $ref: ../common/ColumnName.yaml
+  rows:
+    type: array
+    items:
+      $ref: ParticipantRow.yaml

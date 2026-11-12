@@ -1,0 +1,41 @@
+title: Meta
+type: object
+required:
+  - dataSourceMode
+  - contactDetails
+  - years
+  - dataRefreshedAt
+  - unlinkedRecordCount
+properties:
+  dataSourceMode:
+    type: string
+    enum:
+      - external
+      - internal
+  contactDetails:
+    type: object
+    description: '`true` when the data source holds that contact detail.'
+    required:
+      - name
+      - email
+      - phone
+    properties:
+      name:
+        type: boolean
+      email:
+        type: boolean
+      phone:
+        type: boolean
+  years:
+    type: array
+    uniqueItems: true
+    description: Calendar years with data, ascending.
+    items:
+      type: integer
+  dataRefreshedAt:
+    type: string
+    format: date-time
+  unlinkedRecordCount:
+    type: integer
+    minimum: 0
+    description: Records that match no participant. They are left out of all burden values.

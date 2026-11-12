@@ -1,0 +1,12 @@
+title: Band
+type: object
+additionalProperties: false
+required:
+  - label
+properties:
+  label:
+    type: string
+    minLength: 1
+  upperBound:
+    type: number
+    description: Exclusive. Absent on the last band.

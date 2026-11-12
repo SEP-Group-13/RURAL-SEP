@@ -1,0 +1,10 @@
+title: ColumnList
+type: object
+required:
+  - columns
+properties:
+  columns:
+    type: array
+    description: In default display order.
+    items:
+      $ref: Column.yaml

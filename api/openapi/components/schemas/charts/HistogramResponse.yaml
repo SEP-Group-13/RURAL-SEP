@@ -1,0 +1,33 @@
+title: HistogramResponse
+type: object
+description: |
+  Bin boundaries are multiples of `binWidth`, so the series of several views line up.
+  Empty bins between the lowest and highest value are listed with a count of 0.
+required:
+  - series
+properties:
+  series:
+    type: array
+    items:
+      type: object
+      required:
+        - view
+        - bins
+      properties:
+        view:
+          type: integer
+          description: Index in `views`.
+        bins:
+          type: array
+          items:
+            type: object
+            required:
+              - lowerBound
+              - count
+            properties:
+              lowerBound:
+                type: number
+                description: The bin covers `lowerBound` up to, not including, `lowerBound + binWidth`.
+              count:
+                type: integer
+                minimum: 0

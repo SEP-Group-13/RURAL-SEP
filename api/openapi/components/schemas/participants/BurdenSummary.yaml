@@ -1,0 +1,29 @@
+title: BurdenSummary
+type: object
+required:
+  - timeMinutes
+  - timeByExamElement
+  - radiationMsv
+  - contactFrequency
+  - participation
+properties:
+  timeMinutes:
+    type: number
+  timeByExamElement:
+    type: array
+    items:
+      type: object
+      required:
+        - examElement
+        - timeMinutes
+      properties:
+        examElement:
+          type: string
+        timeMinutes:
+          type: number
+  radiationMsv:
+    type: number
+  contactFrequency:
+    type: integer
+  participation:
+    type: integer
