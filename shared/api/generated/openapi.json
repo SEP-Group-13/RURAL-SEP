@@ -1,0 +1,1504 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "RURAL Dashboard API",
+    "version": "0.2.0",
+    "description": "API for the RURAL Dashboard.\n\nNote!: The server stores no views. A view (years, filters, formulas, simulations, bands and excluded\nparticipants) lives in the browser and is sent in the request body of every operation to the server.\nWe do because of that have read-only operations that use `POST`, but they never change data and always\nidempotent.\n\nConventions: We use JSON with `camelCase`, endpoints with 'kebab-case', timestamps in UTC,\nall durations in minutes, `null` for missing values, and errors as `application/problem+json`.\n",
+    "contact": {
+      "name": "Dashing Dashboard Developers"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Meta"
+    },
+    {
+      "name": "Participants"
+    },
+    {
+      "name": "Charts"
+    }
+  ],
+  "paths": {
+    "/meta": {
+      "get": {
+        "operationId": "getMeta",
+        "tags": [
+          "Meta"
+        ],
+        "summary": "Get deployment and data information",
+        "x-urd": [
+          "URF 2.7",
+          "URF 2.8"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Meta"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    },
+    "/columns": {
+      "get": {
+        "operationId": "listColumns",
+        "tags": [
+          "Meta"
+        ],
+        "summary": "List the columns of the participant data table",
+        "description": "Contact details are listed only when the data source holds them.",
+        "x-urd": [
+          "URF 1.8",
+          "URF 2.2",
+          "URF 2.7",
+          "URF 2.11",
+          "URF 2.12",
+          "URF 2.15",
+          "URF 3.11",
+          "URF 3.13",
+          "URF 10.2"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColumnList"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    },
+    "/burden-presets": {
+      "get": {
+        "operationId": "getBurdenPresets",
+        "tags": [
+          "Meta"
+        ],
+        "summary": "Get the preset burdens with their bands",
+        "x-urd": [
+          "URF 2.12",
+          "URF 2.15",
+          "URF 7.6",
+          "URF 8.1",
+          "URF 8.2",
+          "URF 8.3",
+          "URF 8.4",
+          "URF 8.7"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BurdenPresets"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/participants/query": {
+      "post": {
+        "operationId": "queryParticipants",
+        "tags": [
+          "Participants"
+        ],
+        "summary": "Query the participant data table",
+        "x-urd": [
+          "URF 1.8",
+          "URF 2.1",
+          "URF 2.2",
+          "URF 2.4",
+          "URF 2.5",
+          "URF 2.9",
+          "URF 2.11",
+          "URF 3.11",
+          "URF 3.12",
+          "URF 3.13",
+          "URF 3.14",
+          "URF 3.15",
+          "URF 3.18",
+          "URF 3.19",
+          "URF 7.1",
+          "URF 7.2",
+          "URF 7.3",
+          "URF 7.4",
+          "URF 7.5",
+          "URF 8.1",
+          "URF 8.2",
+          "URF 8.3",
+          "URF 8.4",
+          "URF 8.5",
+          "URF 8.6",
+          "URF 8.8",
+          "URF 8.9",
+          "URF 8.10"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryParticipantsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParticipantPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableContent"
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    },
+    "/participants/search": {
+      "get": {
+        "operationId": "searchParticipants",
+        "tags": [
+          "Participants"
+        ],
+        "summary": "Search participants",
+        "description": "Matches the start of the participant ID. If the data source holds contact details,\nnames, email addresses and phone numbers, then they also match.\n",
+        "x-urd": [
+          "URF 1.8",
+          "URF 2.7",
+          "URF 3.2",
+          "URF 3.5",
+          "URF 3.6"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 250,
+              "default": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParticipantSearchResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    },
+    "/participants/{participantId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ParticipantId"
+        }
+      ],
+      "get": {
+        "operationId": "getParticipant",
+        "tags": [
+          "Participants"
+        ],
+        "summary": "Get a participant",
+        "x-urd": [
+          "URF 1.8",
+          "URF 2.7",
+          "URF 4.1",
+          "URF 4.2",
+          "URF 4.3"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Participant"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    },
+    "/participants/{participantId}/burden": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ParticipantId"
+        }
+      ],
+      "get": {
+        "operationId": "getParticipantBurden",
+        "tags": [
+          "Participants"
+        ],
+        "summary": "Get the burden of a participant per year and cumulatively",
+        "x-urd": [
+          "URF 1.8",
+          "URF 4.4",
+          "URF 4.5",
+          "URF 4.6",
+          "URF 4.7",
+          "URF 4.8",
+          "URF 4.9",
+          "URF 4.10",
+          "URF 4.11",
+          "URF 7.1",
+          "URF 7.2",
+          "URF 7.3",
+          "URF 7.4"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParticipantBurden"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    },
+    "/participants/{participantId}/activities": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/ParticipantId"
+        }
+      ],
+      "get": {
+        "operationId": "listParticipantActivities",
+        "tags": [
+          "Participants"
+        ],
+        "summary": "List the activities of a participant",
+        "x-urd": [
+          "URF 1.8",
+          "URF 4.12",
+          "URF 4.13",
+          "URF 4.14",
+          "URF 4.15"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityList"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    },
+    "/charts/counts": {
+      "post": {
+        "operationId": "queryChartCounts",
+        "tags": [
+          "Charts"
+        ],
+        "summary": "Count participants per value of a column",
+        "x-urd": [
+          "URF 1.8",
+          "URF 2.9",
+          "URF 10.1",
+          "URF 10.2",
+          "URF 10.4",
+          "URF 10.6",
+          "URF 11.2",
+          "URF 11.3",
+          "URF 11.5"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CountChartRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountChartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableContent"
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    },
+    "/charts/histogram": {
+      "post": {
+        "operationId": "queryChartHistogram",
+        "tags": [
+          "Charts"
+        ],
+        "summary": "Get the histogram of a numeric column",
+        "x-urd": [
+          "URF 1.8",
+          "URF 2.9",
+          "URF 10.4",
+          "URF 10.5",
+          "URF 11.2",
+          "URF 11.3",
+          "URF 11.4"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistogramRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistogramResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableContent"
+          },
+          "503": {
+            "$ref": "#/components/responses/DataUnavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Meta": {
+        "title": "Meta",
+        "type": "object",
+        "required": [
+          "dataSourceMode",
+          "contactDetails",
+          "years",
+          "dataRefreshedAt",
+          "unlinkedRecordCount"
+        ],
+        "properties": {
+          "dataSourceMode": {
+            "type": "string",
+            "enum": [
+              "external",
+              "internal"
+            ]
+          },
+          "contactDetails": {
+            "type": "object",
+            "description": "`true` when the data source holds that contact detail.",
+            "required": [
+              "name",
+              "email",
+              "phone"
+            ],
+            "properties": {
+              "name": {
+                "type": "boolean"
+              },
+              "email": {
+                "type": "boolean"
+              },
+              "phone": {
+                "type": "boolean"
+              }
+            }
+          },
+          "years": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "Calendar years with data, ascending.",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "dataRefreshedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unlinkedRecordCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Records that match no participant. They are left out of all burden values."
+          }
+        }
+      },
+      "ProblemFieldError": {
+        "title": "ProblemFieldError",
+        "type": "object",
+        "required": [
+          "pointer",
+          "detail"
+        ],
+        "properties": {
+          "pointer": {
+            "type": "string",
+            "format": "json-pointer",
+            "description": "Location of the invalid value in the request body."
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "Problem": {
+        "title": "Problem",
+        "type": "object",
+        "required": [
+          "type",
+          "title"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "pattern": "^urn:problem:[a-z][a-z0-9-]*$",
+            "description": "Stable identifier for problems, written as `urn:problem:<name>`."
+          },
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string",
+            "description": "Names the specific problem. Written for the end user."
+          },
+          "errors": {
+            "type": "array",
+            "description": "Invalid request fields. Present on status 422 only.",
+            "items": {
+              "$ref": "#/components/schemas/ProblemFieldError"
+            }
+          }
+        }
+      },
+      "ColumnName": {
+        "title": "ColumnName",
+        "type": "string",
+        "minLength": 1,
+        "description": "Name of a column as shown to the user. Unique within a view."
+      },
+      "Column": {
+        "title": "Column",
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "isDefault"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "type": {
+            "type": "string",
+            "description": "Categorical columns have a fixed set of values.",
+            "enum": [
+              "text",
+              "categorical",
+              "numeric"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "description": "The values of a categorical column.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Shown in the default view."
+          }
+        }
+      },
+      "ColumnList": {
+        "title": "ColumnList",
+        "type": "object",
+        "required": [
+          "columns"
+        ],
+        "properties": {
+          "columns": {
+            "type": "array",
+            "description": "In default display order.",
+            "items": {
+              "$ref": "#/components/schemas/Column"
+            }
+          }
+        }
+      },
+      "Band": {
+        "title": "Band",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "upperBound": {
+            "type": "number",
+            "description": "Exclusive. Absent on the last band."
+          }
+        }
+      },
+      "BurdenPreset": {
+        "title": "BurdenPreset",
+        "type": "object",
+        "required": [
+          "name",
+          "formula",
+          "bands",
+          "isDefault"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "formula": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Formula expression. `null` when the burden is a column of the table."
+          },
+          "bands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Band"
+            }
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Default burdens are part of every view. The others are added by the user."
+          }
+        }
+      },
+      "BurdenPresets": {
+        "title": "BurdenPresets",
+        "type": "object",
+        "required": [
+          "presets"
+        ],
+        "properties": {
+          "presets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BurdenPreset"
+            }
+          }
+        }
+      },
+      "CategoricalFilter": {
+        "title": "CategoricalFilter",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "column",
+          "values"
+        ],
+        "properties": {
+          "column": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "values": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RangeFilter": {
+        "title": "RangeFilter",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "column"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "min"
+            ]
+          },
+          {
+            "required": [
+              "max"
+            ]
+          }
+        ],
+        "properties": {
+          "column": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          }
+        }
+      },
+      "Filter": {
+        "title": "Filter",
+        "description": "Participants without a value in the column are excluded. `min` larger than `max` is rejected.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CategoricalFilter"
+          },
+          {
+            "$ref": "#/components/schemas/RangeFilter"
+          }
+        ]
+      },
+      "Formula": {
+        "title": "Formula",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "A numeric column calculated from other columns. The column shows the result for the selected years\ncombined; its band column uses the values of each year.\n",
+        "required": [
+          "name",
+          "expression"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "expression": {
+            "type": "string",
+            "description": "Numbers, column names in square brackets, `+ - * /` and parentheses.\nThe result is `null` when a value is missing or on division by zero.\n",
+            "examples": [
+              "[Time burden (min)] / 360 + [Radiation burden (mSv)] / 10"
+            ]
+          }
+        }
+      },
+      "Simulation": {
+        "title": "Simulation",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "A column that holds the same value for every participant.",
+        "required": [
+          "name",
+          "value"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "value": {
+            "type": "number"
+          }
+        }
+      },
+      "BandSet": {
+        "title": "BandSet",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Adds the band column `<column> band` for a numeric column. Bands are assigned per calendar year from\nthat year's value, so there is one band column for each selected year.\nBands are in ascending order. Labels and bounds must be unique.\n",
+        "required": [
+          "column",
+          "bands"
+        ],
+        "properties": {
+          "column": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "bands": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/Band"
+            }
+          }
+        },
+        "examples": [
+          {
+            "column": "Radiation burden (mSv)",
+            "bands": [
+              {
+                "label": "Low",
+                "upperBound": 3
+              },
+              {
+                "label": "Medium",
+                "upperBound": 10
+              },
+              {
+                "label": "High"
+              }
+            ]
+          }
+        ]
+      },
+      "View": {
+        "title": "View",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "The settings that decide which participants and values a request covers. An empty view covers all\nparticipants and years. Formula and simulation names must differ from each other and from all other columns.\n",
+        "properties": {
+          "years": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "description": "Calendar years to include. All years when absent.",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          },
+          "formulas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Formula"
+            }
+          },
+          "simulations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Simulation"
+            }
+          },
+          "bands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BandSet"
+            }
+          },
+          "excludedParticipantIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Sort": {
+        "title": "Sort",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Participants without a value come last.",
+        "required": [
+          "column",
+          "direction"
+        ],
+        "properties": {
+          "column": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          }
+        }
+      },
+      "PageRequest": {
+        "title": "PageRequest",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 25
+          }
+        }
+      },
+      "QueryParticipantsRequest": {
+        "title": "QueryParticipantsRequest",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "view",
+          "columns"
+        ],
+        "properties": {
+          "view": {
+            "$ref": "#/components/schemas/View"
+          },
+          "columns": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Columns to return, in display order. A band column without a year stands for one column\nper selected year, returned as `<column> band <year>`.\n",
+            "items": {
+              "$ref": "#/components/schemas/ColumnName"
+            }
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageRequest"
+          }
+        }
+      },
+      "ParticipantRow": {
+        "title": "ParticipantRow",
+        "type": "object",
+        "required": [
+          "participantId",
+          "values"
+        ],
+        "properties": {
+          "participantId": {
+            "type": "string"
+          },
+          "values": {
+            "type": "object",
+            "description": "Value per column name.",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      },
+      "ParticipantPage": {
+        "title": "ParticipantPage",
+        "type": "object",
+        "required": [
+          "total",
+          "page",
+          "pageSize",
+          "columns",
+          "rows"
+        ],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of participants in the view, over all pages."
+          },
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          },
+          "columns": {
+            "type": "array",
+            "description": "Returned columns in order, with band columns expanded per year.",
+            "items": {
+              "$ref": "#/components/schemas/ColumnName"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParticipantRow"
+            }
+          }
+        }
+      },
+      "ParticipantSearchResult": {
+        "title": "ParticipantSearchResult",
+        "type": "object",
+        "required": [
+          "total",
+          "participants"
+        ],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of matches, which can exceed `limit`."
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "participantId",
+                "name"
+              ],
+              "properties": {
+                "participantId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "Participant": {
+        "title": "Participant",
+        "type": "object",
+        "description": "Contact details are `null` when the data source does not hold them.",
+        "required": [
+          "participantId",
+          "age",
+          "sex",
+          "race",
+          "county",
+          "state",
+          "studyStatus",
+          "name",
+          "email",
+          "phone"
+        ],
+        "properties": {
+          "participantId": {
+            "type": "string"
+          },
+          "age": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "sex": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "race": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "county": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "studyStatus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "BurdenSummary": {
+        "title": "BurdenSummary",
+        "type": "object",
+        "required": [
+          "timeMinutes",
+          "timeByExamElement",
+          "radiationMsv",
+          "contactFrequency",
+          "participation"
+        ],
+        "properties": {
+          "timeMinutes": {
+            "type": "number"
+          },
+          "timeByExamElement": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "examElement",
+                "timeMinutes"
+              ],
+              "properties": {
+                "examElement": {
+                  "type": "string"
+                },
+                "timeMinutes": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "radiationMsv": {
+            "type": "number"
+          },
+          "contactFrequency": {
+            "type": "integer"
+          },
+          "participation": {
+            "type": "integer"
+          }
+        }
+      },
+      "ParticipantBurden": {
+        "title": "ParticipantBurden",
+        "type": "object",
+        "required": [
+          "cumulative",
+          "perYear"
+        ],
+        "properties": {
+          "cumulative": {
+            "$ref": "#/components/schemas/BurdenSummary"
+          },
+          "perYear": {
+            "type": "array",
+            "description": "Ascending by year.",
+            "items": {
+              "type": "object",
+              "required": [
+                "year",
+                "burden"
+              ],
+              "properties": {
+                "year": {
+                  "type": "integer"
+                },
+                "burden": {
+                  "$ref": "#/components/schemas/BurdenSummary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Activity": {
+        "title": "Activity",
+        "type": "object",
+        "description": "Duration and radiation are `null` when the activity was not completed.",
+        "required": [
+          "date",
+          "examElement",
+          "examType",
+          "additionalStudy",
+          "type",
+          "location",
+          "durationMinutes",
+          "radiationMsv",
+          "status"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "examElement": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "examType": {
+            "type": "string",
+            "enum": [
+              "core",
+              "auxiliary"
+            ]
+          },
+          "additionalStudy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name of the additional study. `null` for a core exam."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "procedure",
+              "survey"
+            ]
+          },
+          "location": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "completed",
+              "notCompleted"
+            ]
+          },
+          "durationMinutes": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "radiationMsv": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "ActivityList": {
+        "title": "ActivityList",
+        "type": "object",
+        "required": [
+          "activities"
+        ],
+        "properties": {
+          "activities": {
+            "type": "array",
+            "description": "Ascending by date.",
+            "items": {
+              "$ref": "#/components/schemas/Activity"
+            }
+          }
+        }
+      },
+      "CountChartRequest": {
+        "title": "CountChartRequest",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "views",
+          "column"
+        ],
+        "properties": {
+          "views": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "description": "More than one view compares them.",
+            "items": {
+              "$ref": "#/components/schemas/View"
+            }
+          },
+          "column": {
+            "$ref": "#/components/schemas/ColumnName"
+          }
+        }
+      },
+      "CountChartResponse": {
+        "title": "CountChartResponse",
+        "type": "object",
+        "description": "Participants per value of a categorical or band column. Every value is listed, also with a count of 0.\nA band column without a year gives one series per selected year.\n",
+        "required": [
+          "series"
+        ],
+        "properties": {
+          "series": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "view",
+                "year",
+                "buckets"
+              ],
+              "properties": {
+                "view": {
+                  "type": "integer",
+                  "description": "Index in `views`."
+                },
+                "year": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Set for band columns."
+                },
+                "buckets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "label",
+                      "count"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "HistogramRequest": {
+        "title": "HistogramRequest",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "views",
+          "column",
+          "binWidth"
+        ],
+        "properties": {
+          "views": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "description": "More than one view compares them.",
+            "items": {
+              "$ref": "#/components/schemas/View"
+            }
+          },
+          "column": {
+            "$ref": "#/components/schemas/ColumnName"
+          },
+          "binWidth": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      },
+      "HistogramResponse": {
+        "title": "HistogramResponse",
+        "type": "object",
+        "description": "Bin boundaries are multiples of `binWidth`, so the series of several views line up.\nEmpty bins between the lowest and highest value are listed with a count of 0.\n",
+        "required": [
+          "series"
+        ],
+        "properties": {
+          "series": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "view",
+                "bins"
+              ],
+              "properties": {
+                "view": {
+                  "type": "integer",
+                  "description": "Index in `views`."
+                },
+                "bins": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "lowerBound",
+                      "count"
+                    ],
+                    "properties": {
+                      "lowerBound": {
+                        "type": "number",
+                        "description": "The bin covers `lowerBound` up to, not including, `lowerBound + binWidth`."
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "DataUnavailable": {
+        "description": "The data source cannot be reached.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "The request is malformed.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "UnprocessableContent": {
+        "description": "A value in the request is invalid.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The resource does not exist.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "ParticipantId": {
+        "name": "participantId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

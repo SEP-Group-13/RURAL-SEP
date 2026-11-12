@@ -8,7 +8,8 @@
     "bundle": "redocly bundle openapi/openapi.yaml --output ../dist/openapi.yaml",
     "docs": "redocly build-docs openapi/openapi.yaml --output ../dist/docs.html",
     "types": "npm run bundle && openapi-typescript ../dist/openapi.yaml --output ../shared/api/generated/api.d.ts",
-    "generate": "npm run lint && npm run types"
+    "bundle:json": "redocly bundle openapi/openapi.yaml --ext json --output ../shared/api/generated/openapi.json",
+    "generate": "npm run lint && npm run types && npm run bundle:json"
   },
   "devDependencies": {
     "@redocly/cli": "^2.41.0",
