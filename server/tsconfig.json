@@ -5,6 +5,7 @@
       "@/*": ["./src/*"],
       "@shared/*": ["../shared/*"],
     },
+    "resolveJsonModule": true,
   },
   "rootDirs": ["./src", "../shared"],
   // "include": ["./src/**/*.ts", "*.d.ts"],
