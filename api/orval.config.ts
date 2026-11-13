@@ -7,12 +7,17 @@ export default defineConfig({
     },
     output: {
       client: "zod",
-      mode: "single",
-      target: "../shared/api/generated/orval/openapi.ts",
+      target: "../shared/api/generated/api.zod.ts",
+      schemas: {
+        path: "../shared/api/generated/schemas",
+        type: "zod",
+        mode: "split",
+      },
       override: {
         zod: {
           version: 4,
           generateReusableSchemas: true,
+        	generateCompanionTypes: true
         },
       },
     },

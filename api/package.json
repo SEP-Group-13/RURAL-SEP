@@ -7,7 +7,7 @@
     "lint": "redocly lint openapi/openapi.yaml",
     "bundle": "redocly bundle openapi/openapi.yaml --output ../dist/openapi.yaml",
     "docs": "redocly build-docs openapi/openapi.yaml --output ../dist/docs.html",
-    "orval": "orval --config ./orval.config.ts",
+    "zod": "orval --config ./orval.config.ts",
     "types": "npm run bundle && openapi-typescript ../dist/openapi.yaml --output ../shared/api/generated/api.d.ts",
     "generate": "npm run lint && npm run types"
   },
