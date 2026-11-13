@@ -1,5 +1,7 @@
-// Zod validators built from the OpenAPI spec, so requests are checked against the spec's rules at runtime
-// Usage: schemas.QueryParticipantsRequest.safeParse(req.body)
+/**
+ * Zod validators built from the OpenAPI spec, so requests are checked against the spec's rules at runtime
+ * Usage: schemas.QueryParticipantsRequest.safeParse(req.body)
+ */
 
 import { z } from 'zod'
 import type { components } from '@shared/api/generated/api.js'
@@ -9,7 +11,7 @@ const defs = JSON.parse(
   JSON.stringify(spec.components.schemas).replaceAll('#/components/schemas/', '#/$defs/')
 )
 
-// fromJSONSchema can't handle RangeFilter's anyOf of only "required", rewrite it as two full objects
+// fromJSONSchema cant handle RangeFilters anyOf of only "required", rewrite it as two full objects
 const { anyOf, ...rangeFilter } = defs.RangeFilter
 defs.RangeFilter = {
   title: rangeFilter.title,
