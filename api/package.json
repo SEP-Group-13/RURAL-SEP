@@ -8,12 +8,10 @@
     "bundle": "redocly bundle openapi/openapi.yaml --output ../dist/openapi.yaml",
     "docs": "redocly build-docs openapi/openapi.yaml --output ../dist/docs.html",
     "zod": "orval --config ./orval.config.ts",
-    "types": "npm run bundle && openapi-typescript ../dist/openapi.yaml --output ../shared/api/generated/api.d.ts",
-    "generate": "npm run lint && npm run types"
+    "generate": "npm run lint && npm run bundle && npm run docs && npm run zod"
   },
   "devDependencies": {
     "@redocly/cli": "^2.41.0",
-    "openapi-typescript": "^7.13.0",
     "orval": "^8.47.0",
     "typescript": "^5.9.0"
   }
