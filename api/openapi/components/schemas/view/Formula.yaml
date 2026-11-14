@@ -1,6 +1,5 @@
 title: Formula
 type: object
-additionalProperties: false
 description: |
   A numeric column calculated from other columns. The column shows the result for the selected years
   combined; its band column uses the values of each year.

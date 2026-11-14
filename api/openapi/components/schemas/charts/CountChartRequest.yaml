@@ -1,6 +1,5 @@
 title: CountChartRequest
 type: object
-additionalProperties: false
 required:
   - views
   - column

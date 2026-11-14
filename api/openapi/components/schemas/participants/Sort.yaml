@@ -1,6 +1,5 @@
 title: Sort
 type: object
-additionalProperties: false
 description: Participants without a value come last.
 required:
   - column

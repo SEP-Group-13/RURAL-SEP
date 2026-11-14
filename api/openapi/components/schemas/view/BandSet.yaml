@@ -1,6 +1,5 @@
 title: BandSet
 type: object
-additionalProperties: false
 description: |
   Adds the band column `<column> band` for a numeric column. Bands are assigned per calendar year from
   that year's value, so there is one band column for each selected year.

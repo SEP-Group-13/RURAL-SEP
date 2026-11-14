@@ -1,6 +1,5 @@
 title: PageRequest
 type: object
-additionalProperties: false
 properties:
   page:
     type: integer

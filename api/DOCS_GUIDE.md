@@ -5,7 +5,7 @@ When in doubt, copy `openapi/paths/meta.yaml` and start from there. You can trea
 ## Main Conventions
 1. The files in `openapi/` are to be taken as the source of truth. The backend and frontend
    follow them, and NOT the other way around. If you want to change the behaviour, first update
-   the api contract, then regenerate the ts, and then only update the code.
+   the api contract, then regenerate the zod objects and TS types, and then only update the code.
 2. Every endpoint includes which URD requirements it references (using a `x-urd` tag). Try to keep it
    as organised as possible, include at least the main ones.
 3. Add a description only if the behaviour isn't obvious from the name. Otherwise just keep it simple.
@@ -24,7 +24,7 @@ api/
       responses/<Name>.yaml       reusable responses (mostly errors)
       parameters/<Name>.yaml      reusable parameters
   STYLE_GUIDE.md
-shared/api/generated/api.d.ts     generated TS types (do always commit it after a change)
+shared/api/generated/*            generated Zod and inferred TS types (do always commit it after a change)
 dist/                             bundled specification and the generated docs.html
 ```
 
@@ -41,16 +41,16 @@ dist/                             bundled specification and the generated docs.h
 2. Copy `openapi/paths/meta.yaml` to a new path file and edit it. Set `operationId`, `tags` (exactly one), `summary`, `x-urd` and every response the caller can get.
 3. Add the path to `paths:` in `openapi/openapi.yaml`. Add the tag there too if it is new.
 4. Add one file per new schema under `components/schemas/<area>/`.
-5. Run `npm run check`. Fix what needs fixing (we have automatic format detection for SOME of it, but not all)
-6. Run `npm run types` and commit `generated/api.d.ts` together with the contract change.
+5. Run `npm run lint`. Fix what needs fixing (we have automatic format detection for SOME of it, but not all)
+6. Run `npm run generate` and commit `shared/api/generated/*` together with the contract change.
 7. Please ask for a review by at least one other member when making the pull request, preferably from the opposing
   team (ie. backend asks frontend and vice versa)
 
 ## Commands
 | `npm run lint` | Checks the contract with Redocly CLI and the rules in `redocly.yaml` |
-| `npm run docs` | Builds the rendered documentation into `dist/docs.html` |
 | `npm run bundle` | Merges all files into one: `dist/openapi.yaml` |
-| `npm run types` | Bundles, then generates `generated/api.d.ts` with openapi-typescript |
+| `npm run docs` | Builds the rendered documentation into `dist/docs.html` |
+| `npm run zod` | Generates zod and TS types in `shared/api/generated/*` |
 | `npm run generate` | Lint, then types. PLEASE always run this before every commit |
 
 ## Methods
