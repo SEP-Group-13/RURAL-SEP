@@ -17,7 +17,7 @@ info:
     name: Dashing Dashboard Developers
 
 servers:
-  - url: /api/v1 # It's a good practice to use a versioned path, but it's to be discussed. Change it when we have a breaking change
+  - url: /api
 
 tags:
   - name: Meta
