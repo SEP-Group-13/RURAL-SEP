@@ -1,0 +1,24 @@
+parameters:
+  - $ref: ../components/parameters/ParticipantId.yaml
+get:
+  operationId: getParticipant
+  tags:
+    - Participants
+  summary: Get a participant
+  x-urd:
+    - URF 1.8
+    - URF 2.7
+    - URF 4.1
+    - URF 4.2
+    - URF 4.3
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/participants/Participant.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '503':
+      $ref: ../components/responses/DataUnavailable.yaml

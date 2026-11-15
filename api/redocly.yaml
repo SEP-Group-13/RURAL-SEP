@@ -1,0 +1,69 @@
+# Redocly CLI configuration (used by `npm run lint`, `npm run bundle`, `npm run docs`).
+# Reference: https://redocly.com/docs/cli/configuration
+#
+# Philosophy: start from Redocly's "recommended" rules, make documentation
+# rules strict (we want thorough descriptions), and add a few project rules
+# that protect the conventions in docs/STYLE_GUIDE.md.
+
+extends:
+  - recommended
+
+rules:
+  # General enforcement of a couple good practices
+  operation-2xx-response: error # every operation must have a 2xx response
+  operation-operationId: error
+  operation-summary: error
+  operation-description: off # only where necessary
+  parameter-description: off # only where necessary
+  tag-description: off # only where necessary
+  operation-singular-tag: error # exactly one tag per operation keeps the rendered docs tidy
+  operation-tag-defined: error # every tag is declared (with a description) in openapi.yaml
+  no-unused-components: error
+  no-invalid-media-type-examples: error # every example must match its schema
+
+  # Not applicable
+  security-defined: off
+  info-license: off
+  info-license-strict: off
+  operation-4xx-response: off
+
+  rule/operation-id-camel-case:
+    severity: error
+    subject:
+      type: Operation
+      property: operationId
+    assertions:
+      casing: camelCase
+    message: operationId must be camelCase, for example getParticipant (style guide, section 3).
+
+  rule/property-names-camel-case:
+    severity: error
+    subject:
+      type: SchemaProperties
+    assertions:
+      casing: camelCase
+    message: Schema property names must be camelCase (style guide, section 3).
+
+  rule/operation-has-x-urd:
+    severity: error
+    subject:
+      type: Operation
+      property: x-urd
+    assertions:
+      defined: true
+      nonEmpty: true
+    message: Every operation needs a non-empty x-urd list of the URD requirements it serves (style guide, section 8).
+
+  rule/x-urd-format:
+    severity: error
+    subject:
+      type: Operation
+      property: x-urd
+    assertions:
+      schema:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          pattern: '^(URF|URC) [0-9]+\.[0-9]+$'
+    message: x-urd entries look like "URF 2.7" or "URC 1.1", one ID per entry, no ranges (style guide, section 8).

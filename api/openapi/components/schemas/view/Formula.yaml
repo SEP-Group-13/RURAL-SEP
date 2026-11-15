@@ -1,0 +1,19 @@
+title: Formula
+type: object
+additionalProperties: false
+description: |
+  A numeric column calculated from other columns. The column shows the result for the selected years
+  combined; its band column uses the values of each year.
+required:
+  - name
+  - expression
+properties:
+  name:
+    $ref: ../common/ColumnName.yaml
+  expression:
+    type: string
+    description: |
+      Numbers, column names in square brackets, `+ - * /` and parentheses.
+      The result is `null` when a value is missing or on division by zero.
+    examples:
+      - '[Time burden (min)] / 360 + [Radiation burden (mSv)] / 10'
