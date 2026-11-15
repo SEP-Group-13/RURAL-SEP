@@ -37,6 +37,7 @@ export {
   useViewPage,
   useViewRows,
   useViewSettings,
+  useParticipant,
 } from './react/useView'
 export { View } from './views/View'
 export { ViewHandler } from './views/ViewHandler'
@@ -44,7 +45,7 @@ export { ViewHandler } from './views/ViewHandler'
 export type { ApiErrorKind } from './api/ApiError'
 export type { ApiConsumer } from './api/ApiConsumer'
 export type { PredefinedFormulaName } from './columns/predefinedFormulas'
-export type { SearchResult } from './participants/DataHandler'
+export type { SearchResult } from './types/search'
 export type { LoadResult, LoadState } from './react/useView'
 export type { RowSource } from './rowSources/RowSource'
 export type { Band, PresetBandName } from './types/band'

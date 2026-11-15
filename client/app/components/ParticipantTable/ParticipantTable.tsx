@@ -6,6 +6,7 @@ import type { Column, SortRule, View, ViewRow } from '~/data'
 import ColumnPicker from './ColumnPicker'
 import { getColumnWidth } from './columnWidths'
 import { formatCell } from './formatCell'
+import { Link } from 'react-router'
 
 export default function ParticipantTable({ view }: { view: View }) {
   const [pageNumber, setPageNumber] = useState(1)

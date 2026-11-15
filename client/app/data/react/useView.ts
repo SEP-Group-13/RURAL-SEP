@@ -7,6 +7,7 @@ import type { RowPage, ViewRow } from '../types/rows'
 import type { ViewSettings } from '../types/view'
 import type { View } from '../views/View'
 import type { ViewHandler, ViewHandlerState } from '../views/ViewHandler'
+import type { ParticipantDetails } from '../types/participant'
 
 export interface LoadingState<T> {
   status: 'loading'
@@ -82,6 +83,19 @@ export function getLatestData<T>(state: LoadState<T>): T | null {
     return state.previousData
   }
   return null
+}
+
+export function useParticipant(dataHandler: DataHandler, participantId: string): LoadResult<ParticipantDetails> {
+  const [state, setState] = useState<LoadState<ParticipantDetails>>({ status: 'loading', previousData: null })
+  const [attempt, setAttempt] = useState(0)
+
+  useEffect(
+    () => loadInto(dataHandler.getParticipant(participantId), setState),
+    [dataHandler, participantId, attempt],
+  )
+
+  const retry = useCallback(() => setAttempt((n) => n + 1), [])
+  return { state, retry }
 }
 
 function loadInto<T>(request: Promise<T>, setState: Dispatch<SetStateAction<LoadState<T>>>): () => void {

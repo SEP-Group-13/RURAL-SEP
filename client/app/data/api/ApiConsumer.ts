@@ -2,6 +2,7 @@ import type { DatasetInfo } from '../types/dataset'
 import type { Participant, ParticipantDetails } from '../types/participant'
 import type { RowPage, ViewRow } from '../types/rows'
 import type { ViewQuery } from '../types/view'
+import type { SearchResult } from '../types/search'
 
 export interface ApiConsumer {
   getDatasetInfo(): Promise<DatasetInfo>
@@ -13,4 +14,6 @@ export interface ApiConsumer {
   getPageParticipants(pageSize: number, pageNumber: number, query: ViewQuery): Promise<RowPage>
 
   getAllParticipantRows(query: ViewQuery): Promise<ViewRow[]>
+
+  searchParticipants(query: string, limit: number): Promise<SearchResult>
 }

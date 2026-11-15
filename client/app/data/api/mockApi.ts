@@ -8,6 +8,7 @@ import type { ApiConsumer } from './ApiConsumer'
 import { ApiError } from './ApiError'
 import { MOCK_DATABASE } from './mockDatabase'
 import { buildAllParticipantDetails } from './mockServer'
+import type { SearchResult } from '../types/search'
 
 const MOCK_PARTICIPANTS = buildAllParticipantDetails(MOCK_DATABASE)
 
@@ -55,6 +56,35 @@ export const mockApi: ApiConsumer = {
     return fakeRequest(() => {
       const participants = MOCK_PARTICIPANTS.map(toParticipant)
       return runPipeline(participants, query)
+    })
+  },
+
+  searchParticipants(query: string, limit: number): Promise<SearchResult> {
+    return fakeRequest(() => {
+      const text = query.trim().toLowerCase()
+      if (text === '') {
+        throw new ApiError('invalidQuery', 'Enter a participant ID, name, email address or phone number.')
+      }
+      if (!Number.isInteger(limit) || limit < 1 || limit > 250) {
+        throw new ApiError('invalidQuery', 'The search limit must be between 1 and 250.')
+      }
+
+      const held = buildDatasetInfo().contactFields            // URF 2.7
+      const looksLikePhone = /^[\d\s()+-]+$/.test(text)
+      const digits = text.replace(/\D/g, '')
+
+      const matches = MOCK_PARTICIPANTS.filter((p) =>
+        p.participantId.toLowerCase().startsWith(text) ||                           // URF 3.2
+        (held.includes('name') && contains(p.name, text)) ||                        // URF 3.6
+        (held.includes('email') && contains(p.email, text)) ||
+        (held.includes('phone') && looksLikePhone && digits !== '' &&
+          (p.phone ?? '').replace(/\D/g, '').includes(digits)),
+      ).sort((a, b) => a.participantId.localeCompare(b.participantId, undefined, { numeric: true }))
+
+      return {
+        total: matches.length,
+        participants: matches.slice(0, limit).map((p) => ({ participantId: p.participantId, name: p.name })),
+      }
     })
   },
 }
@@ -121,4 +151,8 @@ function distinctValues(getValue: (participant: Participant) => string | null): 
     }
   }
   return [...values].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+}
+
+function contains(value: string | null, text: string): boolean {
+  return value !== null && value.toLowerCase().includes(text)
 }
