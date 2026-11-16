@@ -30,6 +30,7 @@ export * from './countChartRequest.zod';
 export * from './countChartResponse.zod';
 export * from './filter.zod';
 export * from './formula.zod';
+export * from './getParticipantsSearchParams.zod';
 export * from './histogramRequest.zod';
 export * from './histogramResponse.zod';
 export * from './meta.zod';

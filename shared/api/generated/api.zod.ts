@@ -35,43 +35,43 @@ import {
 /**
  * @summary Get deployment and data information
  */
-export const GetMetaResponse = Meta
+export const GetMetaInfoResponse = Meta
 
-export type GetMetaResponse = zod.input<typeof GetMetaResponse>;
-export type GetMetaResponseOutput = zod.output<typeof GetMetaResponse>;
+export type GetMetaInfoResponse = zod.input<typeof GetMetaInfoResponse>;
+export type GetMetaInfoResponseOutput = zod.output<typeof GetMetaInfoResponse>;
 
 
 /**
  * Contact details are listed only when the data source holds them.
  * @summary List the columns of the participant data table
  */
-export const ListColumnsResponse = ColumnList
+export const GetMetaColumnsResponse = ColumnList
 
-export type ListColumnsResponse = zod.input<typeof ListColumnsResponse>;
-export type ListColumnsResponseOutput = zod.output<typeof ListColumnsResponse>;
+export type GetMetaColumnsResponse = zod.input<typeof GetMetaColumnsResponse>;
+export type GetMetaColumnsResponseOutput = zod.output<typeof GetMetaColumnsResponse>;
 
 
 /**
  * @summary Get the preset burdens with their bands
  */
-export const GetBurdenPresetsResponse = BurdenPresets
+export const GetMetaBurdenPresetsResponse = BurdenPresets
 
-export type GetBurdenPresetsResponse = zod.input<typeof GetBurdenPresetsResponse>;
-export type GetBurdenPresetsResponseOutput = zod.output<typeof GetBurdenPresetsResponse>;
+export type GetMetaBurdenPresetsResponse = zod.input<typeof GetMetaBurdenPresetsResponse>;
+export type GetMetaBurdenPresetsResponseOutput = zod.output<typeof GetMetaBurdenPresetsResponse>;
 
 
 /**
  * @summary Query the participant data table
  */
-export const QueryParticipantsBody = QueryParticipantsRequest
+export const PostParticipantsQueryBody = QueryParticipantsRequest
 
-export type QueryParticipantsBody = zod.input<typeof QueryParticipantsBody>;
-export type QueryParticipantsBodyOutput = zod.output<typeof QueryParticipantsBody>;
+export type PostParticipantsQueryBody = zod.input<typeof PostParticipantsQueryBody>;
+export type PostParticipantsQueryBodyOutput = zod.output<typeof PostParticipantsQueryBody>;
 
-export const QueryParticipantsResponse = ParticipantPage
+export const PostParticipantsQueryResponse = ParticipantPage
 
-export type QueryParticipantsResponse = zod.input<typeof QueryParticipantsResponse>;
-export type QueryParticipantsResponseOutput = zod.output<typeof QueryParticipantsResponse>;
+export type PostParticipantsQueryResponse = zod.input<typeof PostParticipantsQueryResponse>;
+export type PostParticipantsQueryResponseOutput = zod.output<typeof PostParticipantsQueryResponse>;
 
 
 /**
@@ -80,96 +80,96 @@ export type QueryParticipantsResponseOutput = zod.output<typeof QueryParticipant
  * @summary Search participants
  */
 
-export const searchParticipantsQueryLimitDefault = 25;
-export const searchParticipantsQueryLimitMax = 250;
+export const getParticipantsSearchQueryLimitDefault = 25;
+export const getParticipantsSearchQueryLimitMax = 250;
 
 
 
-export const SearchParticipantsQueryParams = zod.object({
+export const GetParticipantsSearchQueryParams = zod.object({
   "query": zod.string().min(1),
-  "limit": zod.int().min(1).max(searchParticipantsQueryLimitMax).default(searchParticipantsQueryLimitDefault)
+  "limit": zod.int().min(1).max(getParticipantsSearchQueryLimitMax).default(getParticipantsSearchQueryLimitDefault)
 })
 
-export type SearchParticipantsQueryParams = zod.input<typeof SearchParticipantsQueryParams>;
-export type SearchParticipantsQueryParamsOutput = zod.output<typeof SearchParticipantsQueryParams>;
+export type GetParticipantsSearchQueryParams = zod.input<typeof GetParticipantsSearchQueryParams>;
+export type GetParticipantsSearchQueryParamsOutput = zod.output<typeof GetParticipantsSearchQueryParams>;
 
-export const SearchParticipantsResponse = ParticipantSearchResult
+export const GetParticipantsSearchResponse = ParticipantSearchResult
 
-export type SearchParticipantsResponse = zod.input<typeof SearchParticipantsResponse>;
-export type SearchParticipantsResponseOutput = zod.output<typeof SearchParticipantsResponse>;
+export type GetParticipantsSearchResponse = zod.input<typeof GetParticipantsSearchResponse>;
+export type GetParticipantsSearchResponseOutput = zod.output<typeof GetParticipantsSearchResponse>;
 
 
 /**
  * @summary Get a participant
  */
-export const GetParticipantParams = zod.object({
+export const GetParticipantsParticipantIdParams = zod.object({
   "participantId": zod.string()
 })
 
-export type GetParticipantParams = zod.input<typeof GetParticipantParams>;
-export type GetParticipantParamsOutput = zod.output<typeof GetParticipantParams>;
+export type GetParticipantsParticipantIdParams = zod.input<typeof GetParticipantsParticipantIdParams>;
+export type GetParticipantsParticipantIdParamsOutput = zod.output<typeof GetParticipantsParticipantIdParams>;
 
-export const GetParticipantResponse = Participant
+export const GetParticipantsParticipantIdResponse = Participant
 
-export type GetParticipantResponse = zod.input<typeof GetParticipantResponse>;
-export type GetParticipantResponseOutput = zod.output<typeof GetParticipantResponse>;
+export type GetParticipantsParticipantIdResponse = zod.input<typeof GetParticipantsParticipantIdResponse>;
+export type GetParticipantsParticipantIdResponseOutput = zod.output<typeof GetParticipantsParticipantIdResponse>;
 
 
 /**
  * @summary Get the burden of a participant per year and cumulatively
  */
-export const GetParticipantBurdenParams = zod.object({
+export const GetParticipantsParticipantIdBurdenParams = zod.object({
   "participantId": zod.string()
 })
 
-export type GetParticipantBurdenParams = zod.input<typeof GetParticipantBurdenParams>;
-export type GetParticipantBurdenParamsOutput = zod.output<typeof GetParticipantBurdenParams>;
+export type GetParticipantsParticipantIdBurdenParams = zod.input<typeof GetParticipantsParticipantIdBurdenParams>;
+export type GetParticipantsParticipantIdBurdenParamsOutput = zod.output<typeof GetParticipantsParticipantIdBurdenParams>;
 
-export const GetParticipantBurdenResponse = ParticipantBurden
+export const GetParticipantsParticipantIdBurdenResponse = ParticipantBurden
 
-export type GetParticipantBurdenResponse = zod.input<typeof GetParticipantBurdenResponse>;
-export type GetParticipantBurdenResponseOutput = zod.output<typeof GetParticipantBurdenResponse>;
+export type GetParticipantsParticipantIdBurdenResponse = zod.input<typeof GetParticipantsParticipantIdBurdenResponse>;
+export type GetParticipantsParticipantIdBurdenResponseOutput = zod.output<typeof GetParticipantsParticipantIdBurdenResponse>;
 
 
 /**
  * @summary List the activities of a participant
  */
-export const ListParticipantActivitiesParams = zod.object({
+export const GetParticipantsParticipantIdActivitiesParams = zod.object({
   "participantId": zod.string()
 })
 
-export type ListParticipantActivitiesParams = zod.input<typeof ListParticipantActivitiesParams>;
-export type ListParticipantActivitiesParamsOutput = zod.output<typeof ListParticipantActivitiesParams>;
+export type GetParticipantsParticipantIdActivitiesParams = zod.input<typeof GetParticipantsParticipantIdActivitiesParams>;
+export type GetParticipantsParticipantIdActivitiesParamsOutput = zod.output<typeof GetParticipantsParticipantIdActivitiesParams>;
 
-export const ListParticipantActivitiesResponse = ActivityList
+export const GetParticipantsParticipantIdActivitiesResponse = ActivityList
 
-export type ListParticipantActivitiesResponse = zod.input<typeof ListParticipantActivitiesResponse>;
-export type ListParticipantActivitiesResponseOutput = zod.output<typeof ListParticipantActivitiesResponse>;
+export type GetParticipantsParticipantIdActivitiesResponse = zod.input<typeof GetParticipantsParticipantIdActivitiesResponse>;
+export type GetParticipantsParticipantIdActivitiesResponseOutput = zod.output<typeof GetParticipantsParticipantIdActivitiesResponse>;
 
 
 /**
  * @summary Count participants per value of a column
  */
-export const QueryChartCountsBody = CountChartRequest
+export const PostChartsCountsBody = CountChartRequest
 
-export type QueryChartCountsBody = zod.input<typeof QueryChartCountsBody>;
-export type QueryChartCountsBodyOutput = zod.output<typeof QueryChartCountsBody>;
+export type PostChartsCountsBody = zod.input<typeof PostChartsCountsBody>;
+export type PostChartsCountsBodyOutput = zod.output<typeof PostChartsCountsBody>;
 
-export const QueryChartCountsResponse = CountChartResponse
+export const PostChartsCountsResponse = CountChartResponse
 
-export type QueryChartCountsResponse = zod.input<typeof QueryChartCountsResponse>;
-export type QueryChartCountsResponseOutput = zod.output<typeof QueryChartCountsResponse>;
+export type PostChartsCountsResponse = zod.input<typeof PostChartsCountsResponse>;
+export type PostChartsCountsResponseOutput = zod.output<typeof PostChartsCountsResponse>;
 
 
 /**
  * @summary Get the histogram of a numeric column
  */
-export const QueryChartHistogramBody = HistogramRequest
+export const PostChartsHistogramBody = HistogramRequest
 
-export type QueryChartHistogramBody = zod.input<typeof QueryChartHistogramBody>;
-export type QueryChartHistogramBodyOutput = zod.output<typeof QueryChartHistogramBody>;
+export type PostChartsHistogramBody = zod.input<typeof PostChartsHistogramBody>;
+export type PostChartsHistogramBodyOutput = zod.output<typeof PostChartsHistogramBody>;
 
-export const QueryChartHistogramResponse = HistogramResponse
+export const PostChartsHistogramResponse = HistogramResponse
 
-export type QueryChartHistogramResponse = zod.input<typeof QueryChartHistogramResponse>;
-export type QueryChartHistogramResponseOutput = zod.output<typeof QueryChartHistogramResponse>;
+export type PostChartsHistogramResponse = zod.input<typeof PostChartsHistogramResponse>;
+export type PostChartsHistogramResponseOutput = zod.output<typeof PostChartsHistogramResponse>;

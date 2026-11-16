@@ -1,5 +1,5 @@
 get:
-  operationId: searchParticipants
+  operationId: getParticipantsSearch
   tags:
     - Participants
   summary: Search participants

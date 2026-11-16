@@ -1,7 +1,7 @@
 parameters:
   - $ref: ../components/parameters/ParticipantId.yaml
 get:
-  operationId: listParticipantActivities
+  operationId: getParticipantsParticipantIdActivities
   tags:
     - Participants
   summary: List the activities of a participant
