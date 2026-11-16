@@ -1,0 +1,16 @@
+# Code owners: GitHub automatically requests a review from these owners
+
+# Frontend
+/client/   @SEP-Group-13/frontend
+
+# Backend
+/server/   @SEP-Group-13/backend
+/api/      @SEP-Group-13/backend
+/db/       @SEP-Group-13/backend
+
+# Shared between client and server
+/shared/   @SEP-Group-13/frontend @SEP-Group-13/backend
+
+# Contribution rules and repo config
+/.github/        @SEP-Group-13/maintainers
+/CONTRIBUTING.md @SEP-Group-13/maintainers
