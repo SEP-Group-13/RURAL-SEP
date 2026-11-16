@@ -1,5 +1,5 @@
 post:
-  operationId: queryChartHistogram
+  operationId: postChartsHistogram
   tags:
     - Charts
   summary: Get the histogram of a numeric column

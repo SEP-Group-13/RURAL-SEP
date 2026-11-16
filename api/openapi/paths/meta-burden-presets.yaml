@@ -1,5 +1,5 @@
 get:
-  operationId: getBurdenPresets
+  operationId: getMetaBurdenPresets
   tags:
     - Meta
   summary: Get the preset burdens with their bands

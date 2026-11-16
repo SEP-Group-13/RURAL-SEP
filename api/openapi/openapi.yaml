@@ -17,20 +17,21 @@ info:
     name: Dashing Dashboard Developers
 
 servers:
-  - url: /api/v1 # It's a good practice to use a versioned path, but it's to be discussed. Change it when we have a breaking change
+  - url: /api
 
 tags:
   - name: Meta
+    description: Deployment, data-source, and participant-data configuration metadata.
   - name: Participants
   - name: Charts
 
 paths:
-  /meta:
-    $ref: paths/meta.yaml
-  /columns:
-    $ref: paths/columns.yaml
-  /burden-presets:
-    $ref: paths/burden-presets.yaml
+  /meta/info:
+    $ref: paths/meta-info.yaml
+  /meta/columns:
+    $ref: paths/meta-columns.yaml
+  /meta/burden-presets:
+    $ref: paths/meta-burden-presets.yaml
   /participants/query:
     $ref: paths/participants-query.yaml
   /participants/search:

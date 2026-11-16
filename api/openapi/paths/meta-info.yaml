@@ -1,5 +1,5 @@
 get:
-  operationId: getMeta
+  operationId: getMetaInfo
   tags:
     - Meta
   summary: Get deployment and data information

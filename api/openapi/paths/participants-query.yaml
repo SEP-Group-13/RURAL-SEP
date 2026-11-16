@@ -1,5 +1,5 @@
 post:
-  operationId: queryParticipants
+  operationId: postParticipantsQuery
   tags:
     - Participants
   summary: Query the participant data table

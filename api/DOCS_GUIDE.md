@@ -1,6 +1,6 @@
 # API style guide
 
-When in doubt, copy `openapi/paths/meta.yaml` and start from there. You can treat it as the reference example.
+When in doubt, copy `openapi/paths/meta-info.yaml` and start from there. You can treat it as the reference example.
 
 ## Main Conventions
 1. The files in `openapi/` are to be taken as the source of truth. The backend and frontend
@@ -12,6 +12,8 @@ When in doubt, copy `openapi/paths/meta.yaml` and start from there. You can trea
 4. The url endpoints use `kebab-case`, and the JSON fields use plural `camelCase`.
 5. Keep bodies as objects at all times, that way it's easy to add data onto it without changing the whole
    endpoint's format and code.
+6. Operation IDs use `<httpMethod><URL path segments in PascalCase>`, for example
+   `getMetaColumns` or `postParticipantsQuery`.
 
 ## Structure
 ```
@@ -29,7 +31,7 @@ dist/                             bundled specification and the generated docs.h
 ```
 
 - **Path files** are named after the path, with `/` replaced by `-` and the braces removed. So for example,
-  `/meta` is `meta.yaml`, `/participants/{participantId}/burden` is `participants-participantId-burden.yaml`.
+  `/meta/info` is `meta-info.yaml`, `/participants/{participantId}/burden` is `participants-participantId-burden.yaml`.
   Path files hold all methods for that url (ie. both `post` and `get`).
 - **Schema files** are named exactly like the schema (`Meta.yaml` defines `Meta`). Keep names unique,
   because the bundler uses the file name as the schema name.
@@ -38,7 +40,7 @@ dist/                             bundled specification and the generated docs.h
 
 ## Adding an endpoint
 1. Find the requirements and the use case in the URD that the operation serves.
-2. Copy `openapi/paths/meta.yaml` to a new path file and edit it. Set `operationId`, `tags` (exactly one), `summary`, `x-urd` and every response the caller can get.
+2. Copy `openapi/paths/meta-info.yaml` to a new path file and edit it. Set `operationId`, `tags` (exactly one), `summary`, `x-urd` and every response the caller can get.
 3. Add the path to `paths:` in `openapi/openapi.yaml`. Add the tag there too if it is new.
 4. Add one file per new schema under `components/schemas/<area>/`.
 5. Run `npm run lint`. Fix what needs fixing (we have automatic format detection for SOME of it, but not all)
