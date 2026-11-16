@@ -1,6 +1,6 @@
 # Contributing to RURAL-SEP
 
-Thanks for contributing! This document describes how work flows from an idea to
+This document describes how work flows from an idea to
 `main`. The process is loosely modelled on the
 [Kubernetes contributor guide](https://www.kubernetes.dev/docs/guide/): every change
 is tracked by an issue, lives on its own branch, passes CI, and is reviewed by the
@@ -8,8 +8,8 @@ people who own the code it touches.
 
 > **TL;DR**
 >
-> 1. Open (or pick) an **issue** and label it `frontend`, `backend` and/or `shared`.
-> 2. Create a **branch** `<type>/<short-description>` from `main`.
+> 1. Pick an **issue** from your subteam's backlog and assign yourself.
+> 2. Create a **branch** `<type>/<short-description>` from `main` for that issue.
 > 3. Make **commits** named `<type>(<scope>): <description>`.
 > 4. Open a **pull request** with the same title format and `Closes #<issue>` in the body.
 > 5. Wait for **CI** (lint + tests) to pass and for the required **reviews**.
@@ -22,7 +22,6 @@ people who own the code it touches.
 - [Workflow overview](#workflow-overview)
 - [Types](#types)
 - [Scopes](#scopes)
-- [Issues](#issues)
 - [Branches](#branches)
 - [Commits](#commits)
 - [Pull requests](#pull-requests)
@@ -91,36 +90,10 @@ more, consider splitting the work into smaller PRs.
 
 ---
 
-## Issues
-
-Every piece of work starts with an issue so it can be tracked and discussed
-before code is written.
-
-**Title** follows the same format as commits:
-
-```
-<type>(<scope>): <short description>
-```
-
-e.g. `feat(client): participant table with pagination`.
-
-**Labels:** tag each issue with the part(s) of the codebase it affects. Add as
-many as apply, e.g. a new endpoint that the UI consumes is `backend` + `frontend`.
-
-| Label      | Covers                                  |
-| ---------- | --------------------------------------- |
-| `frontend` | `client/`                               |
-| `backend`  | `server/`, `api/`, `db/`                |
-| `shared`   | `shared/`                               |
-
-**Body** should explain *what* and *why*, and list acceptance criteria where
-possible. Assign yourself when you start working on it so work isn't duplicated.
-
----
-
 ## Branches
 
-Create branches from an up-to-date `main`:
+Issues are created as a backlog by each subteam. To start work, pick an issue,
+assign yourself, and create a branch for it from an up-to-date `main`:
 
 ```sh
 git switch main
@@ -132,7 +105,7 @@ git switch -c <type>/<short-description>
 
 - `<type>` is one of the [types](#types) above.
 - `<short-description>` is lowercase, words separated by hyphens, 2–5 words.
-- Every branch must have an associated issue. Link it from the PR.
+- Every branch belongs to exactly one issue. Link it from the PR with `Closes #<issue>`.
 
 Keep branches short-lived. Rebase or merge `main` into your branch regularly to
 avoid painful conflicts. Branches are deleted automatically after merge.
@@ -185,7 +158,6 @@ feat(client): add participant table with pagination
 
 - `Closes #<issue>`, so the issue closes automatically on merge.
 - A short summary of what changed and why.
-- How you tested it (and screenshots for UI changes).
 
 **Guidelines:**
 
@@ -193,10 +165,6 @@ feat(client): add participant table with pagination
   and more thoroughly.
 - Open a **draft PR** early if you want feedback before it's finished.
 - Run lint and tests locally before requesting review.
-- Don't mix unrelated refactors or formatting into a feature PR. Open a separate
-  one.
-- If you change the OpenAPI contract, commit the regenerated types in the same PR
-  (see [`api/DOCS_GUIDE.md`](api/DOCS_GUIDE.md)).
 
 ---
 
@@ -214,3 +182,6 @@ feat(client): add participant table with pagination
 - The branch is deleted automatically after merge.
 - If `main` moved on and GitHub reports the branch is out of date, update it
   (rebase or merge `main`) and let CI re-run.
+- Although each PR lands on `main` as a single squashed commit, the individual
+  commits are not lost: open the PR (linked by the `(#<number>)` at the end of
+  the commit message) and check its **Commits** tab.
