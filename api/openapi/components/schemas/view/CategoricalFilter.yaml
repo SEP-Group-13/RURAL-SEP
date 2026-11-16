@@ -1,6 +1,5 @@
 title: CategoricalFilter
 type: object
-additionalProperties: false
 required:
   - column
   - values

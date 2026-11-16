@@ -1,6 +1,5 @@
 title: QueryParticipantsRequest
 type: object
-additionalProperties: false
 required:
   - view
   - columns

@@ -1,6 +1,5 @@
 title: RangeFilter
 type: object
-additionalProperties: false
 required:
   - column
 anyOf:
