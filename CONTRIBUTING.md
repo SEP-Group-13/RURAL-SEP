@@ -107,9 +107,6 @@ git switch -c <type>/<short-description>
 - `<short-description>` is lowercase, words separated by hyphens, 2–5 words.
 - Every branch belongs to exactly one issue. Link it from the PR with `Closes #<issue>`.
 
-Keep branches short-lived. Rebase or merge `main` into your branch regularly to
-avoid painful conflicts. Branches are deleted automatically after merge.
-
 ---
 
 ## Commits
