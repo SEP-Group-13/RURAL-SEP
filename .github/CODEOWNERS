@@ -11,6 +11,8 @@
 # Shared between client and server
 /shared/   @SEP-Group-13/frontend @SEP-Group-13/backend
 
+/shared/api/generated/
+
 # Contribution rules and repo config
 /.github/        @SEP-Group-13/maintainers
 /CONTRIBUTING.md @SEP-Group-13/maintainers
