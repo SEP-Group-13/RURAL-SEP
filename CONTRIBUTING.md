@@ -119,16 +119,28 @@ git switch -c <type>/<short-description>
 [optional body: what changed and why]
 
 [optional footer: Refs #42, BREAKING CHANGE: ...]
-```
 
+```
 Rules:
 
 - `<description>` is in the **imperative mood**, lowercase, no trailing period:
   "add", "fix", "remove", not "added" / "fixes".
 - Keep the subject line under ~72 characters.
 - Use the body to explain *why* when it isn't obvious from the diff.
-- One logical change per commit. "WIP" commits are fine on your branch since
-  we squash on merge, but the **PR title** must follow the format.
+- One logical change per commit. Keep commit messages as close to the format as
+  possible; the **PR title** must follow it exactly, since it becomes the commit
+  on `main` when we squash-merge.
+- Mark **breaking changes** with `!` after the scope, and explain them in a
+  `BREAKING CHANGE:` footer.
+
+**Breaking changes** are changes that force other code or other people to update
+too, for example:
+
+- renaming, removing or changing the parameters or response shape of an API
+  endpoint that the client relies on
+- changing a type in `shared/` that client or server code depends on
+- changing the database schema in a way that requires recreating or migrating
+  the database
 
 Examples:
 
@@ -138,6 +150,8 @@ fix(server): handle empty csv rows when loading participants
 docs(api): add /participants endpoints
 refactor(shared): move api types into shared/api
 chore(root): add eslint to all workspaces
+feat(api)!: rename /participants/{id}/burden to /participants/{id}/load
+BREAKING CHANGE: the client must call /participants/{id}/load instead.
 ```
 
 ---
