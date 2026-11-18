@@ -6,6 +6,7 @@ import type { Column, SortRule, View, ViewRow, ViewSettings } from '~/data'
 import ColumnPicker from './ColumnPicker'
 import { getColumnWidth } from './columnWidths'
 import { formatCell } from './formatCell'
+import { Link } from 'react-router'
 
 /** One column on screen. A band column is shown as one column per year (the server bands per year). */
 interface DisplayColumn {

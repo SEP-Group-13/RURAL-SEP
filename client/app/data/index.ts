@@ -52,6 +52,7 @@ export {
 } from './react/useView'
 export { View } from './views/View'
 export { ViewHandler } from './views/ViewHandler'
+export { useParticipantSearch } from './react/useParticipantSearch'
 
 export type { ApiErrorKind } from './api/ApiError'
 export type { ApiConsumer, RequestOptions } from './api/ApiConsumer'
@@ -78,3 +79,4 @@ export type { ActionResult } from './types/result'
 export type { CellValue, RowPage, ViewRow } from './types/rows'
 export type { SortDirection, SortRule, ViewQuery, ViewSettings, YearSelection } from './types/view'
 export type { ViewHandlerState } from './views/ViewHandler'
+export type { SearchState } from './react/useParticipantSearch'
