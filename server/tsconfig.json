@@ -1,11 +1,12 @@
 {
   "extends": ["@tsconfig/node24/tsconfig.json", "@tsconfig/node-ts/tsconfig.json"],
+  "include": ["src/**/*.ts", "../shared/**/*.ts"],
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["../shared/*"],
-    },
-  },
-  "rootDirs": ["./src", "../shared"],
-  // "include": ["./src/**/*.ts", "*.d.ts"],
+    }
+  }
 }
