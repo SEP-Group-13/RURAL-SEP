@@ -25,7 +25,17 @@ const participant: ApiParticipant = {
   studyStatus: 'Active',
 }
 
-const emptySummary = { timeMinutes: 0, timeByExamElement: [], radiationMsv: 0, contactFrequency: 0, participation: 0 }
+const emptySummary = {
+  timeMinutes: 0,
+  timeByExamElement: [],
+  radiationMsv: 0,
+  contactFrequency: 0,
+  participation: 0,
+  emailsSent: 0,
+  smsSent: 0,
+  coreExamCompleted: 0,
+  additionalStudies: 0,
+}
 const burden: ParticipantBurden = { cumulative: emptySummary, perYear: [] }
 
 /** An ApiConsumer whose methods are vi.fn()s; override the ones a test needs. */
