@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 import env from '@/utils/env.js'
 import { waitForDatabaseConnection } from '@/utils/database.js'
 import { errorHandler } from '@/routes/error.route.js'
+import metaRouter from '@/routes/meta.router.js'
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -18,7 +19,7 @@ app.use(express.json()) // Allows parsing of application/json
 
 
 // Routes
-// app.use('/api/user', userRoutes)
+app.use('/api/meta', metaRouter)
 app.use(errorHandler)
 
 
