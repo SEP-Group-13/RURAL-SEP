@@ -425,8 +425,14 @@ export interface components {
                 timeMinutes: number;
             }[];
             radiationMsv: number;
+            /** @description `emailsSent` + `smsSent`. */
             contactFrequency: number;
+            /** @description `coreExamCompleted` + `additionalStudies`. */
             participation: number;
+            emailsSent: number;
+            smsSent: number;
+            coreExamCompleted: number;
+            additionalStudies: number;
         };
         /** ParticipantBurden */
         ParticipantBurden: {
