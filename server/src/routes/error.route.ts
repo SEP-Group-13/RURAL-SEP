@@ -4,7 +4,7 @@ import { env } from "process"
 import { ZodError } from "zod"
 import { badRequest, databaseError, internalServerError, invalidData, notFound, serviceUnavailable, unprocessableContent } from "@/utils/httpResponses.js"
 
-export const errorHandler = (err: unknown, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunction) => {
   if (env.NODE_ENV == 'development') {
     console.log(`[Error] ${err instanceof Error ? err.message : String(err)}`)
   }
