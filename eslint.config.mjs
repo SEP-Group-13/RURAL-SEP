@@ -38,6 +38,8 @@ export default tseslint.config(
       'max-lines-per-function': ['warn', { max: 80, skipBlankLines: true, skipComments: true }],
       // Allow unused function parameters if they start with an underscore.
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      // Allow an empty {} as a function parameter
+      'no-empty-pattern': ['error', { allowObjectPatternsAsParameters: true }],
     },
   },
 
