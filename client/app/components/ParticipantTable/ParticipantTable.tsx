@@ -1,12 +1,12 @@
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router'
 import Button from '~/components/Button/Button'
 import { getLatestData, useViewPage, useViewSettings } from '~/data'
 import type { Column, SortRule, View, ViewRow } from '~/data'
 import ColumnPicker from './ColumnPicker'
 import { getColumnWidth } from './columnWidths'
 import { formatCell } from './formatCell'
-import { Link } from 'react-router'
 
 export default function ParticipantTable({ view }: { view: View }) {
   const [pageNumber, setPageNumber] = useState(1)
@@ -120,7 +120,13 @@ function ParticipantRow({
     <div className="grid gap-2 px-3 py-2 border-b border-sidebar-surface" style={{ gridTemplateColumns }}>
       {columns.map((column) => (
         <span key={column.key} className="truncate">
-          {formatCell(row.cells[column.key])}
+          {column.key === 'participantId' ? (
+            <Link to={`/participants/${encodeURIComponent(row.participantId)}`} className='hover:text-blue-500'>
+            {formatCell(row.cells[column.key])}
+          </Link>
+          ) : (
+            formatCell(row.cells[column.key])
+          )}
         </span>
       ))}
     </div>

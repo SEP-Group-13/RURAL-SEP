@@ -4,7 +4,7 @@ import TopBar from "~/components/TopBar/TopBar";
 
 export default function DashboardLayout() {
   return (
-    <div className="grid h-screen grid-cols-[250px_minmax(0,1fr)]">
+    <div className="grid min-h-screen grid-cols-[250px_minmax(0,1fr)]">
       <SideBar />
       <div className="bg-dashboard-surface">
         <TopBar />
