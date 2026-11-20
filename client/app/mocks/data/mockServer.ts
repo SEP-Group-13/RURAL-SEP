@@ -1,4 +1,4 @@
-import type { Activity, ExamElementTime, ExamType, ParticipantDetails, YearlyTotals } from '../types/participant'
+import type { Activity, ExamElementTime, ExamType, ParticipantDetails, YearlyTotals } from '../../data/types/participant'
 import type { InpersonBurdenEventRow, MockDatabase, ParticipantTableRow, TestDataSurveyRow } from './databaseRows'
 
 interface ExamElementInfo {
