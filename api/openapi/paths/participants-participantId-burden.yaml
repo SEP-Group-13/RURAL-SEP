@@ -1,0 +1,32 @@
+parameters:
+  - $ref: ../components/parameters/ParticipantId.yaml
+get:
+  operationId: getParticipantBurden
+  tags:
+    - Participants
+  summary: Get the burden of a participant per year and cumulatively
+  x-urd:
+    - URF 1.8
+    - URF 4.4
+    - URF 4.5
+    - URF 4.6
+    - URF 4.7
+    - URF 4.8
+    - URF 4.9
+    - URF 4.10
+    - URF 4.11
+    - URF 7.1
+    - URF 7.2
+    - URF 7.3
+    - URF 7.4
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/participants/ParticipantBurden.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '503':
+      $ref: ../components/responses/DataUnavailable.yaml

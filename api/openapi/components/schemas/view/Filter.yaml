@@ -1,0 +1,5 @@
+title: Filter
+description: Participants without a value in the column are excluded. `min` larger than `max` is rejected.
+oneOf:
+  - $ref: CategoricalFilter.yaml
+  - $ref: RangeFilter.yaml

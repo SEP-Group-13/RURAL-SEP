@@ -1,0 +1,20 @@
+title: HistogramRequest
+type: object
+additionalProperties: false
+required:
+  - views
+  - column
+  - binWidth
+properties:
+  views:
+    type: array
+    minItems: 1
+    maxItems: 10
+    description: More than one view compares them.
+    items:
+      $ref: ../view/View.yaml
+  column:
+    $ref: ../common/ColumnName.yaml
+  binWidth:
+    type: number
+    exclusiveMinimum: 0

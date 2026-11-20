@@ -6,7 +6,8 @@
   "workspaces": [
     "client",
     "server",
-    "shared"
+    "shared",
+    "api"
   ],
   "scripts": {
     "dev:client": "npm run dev -w client",
@@ -14,9 +15,10 @@
     "dev:server": "npm run dev -w server",
     "build:server": "npm run build -w server",
     "prod:server": "npm run start -w server",
+    "api:generate": "npm run generate -w api",
+    "api:docs": "npm run docs -w api",
     "dev": "run-p dev:server dev:client",
-    "build": "npm run build:client && npm run build:server",
-    "api:types": "npx -y openapi-typescript@7.13.0 shared/api/openapi.yaml -o shared/api/openapi.ts",
+    "build": "npm run api:generate && npm run api:docs && npm run build:client && npm run build:server",
     "ls": "git ls-files --cached --others --exclude-standard | grep -v -E '\\.(md|yaml|png|jpg|jpeg|gif|svg|ico|webp|mp3|mp4|woff|woff2|ttf|eot|otf|pdf|zip|gz|tar)$' | grep -v -E '^(package(-lock)?.json|webpack.config.mjs|tsconfig.json|.gitignore)$' | awk -F. 'NF>1 { exts[$NF]++ ; files[$NF] = files[$NF] \" \" $0 } END { for (e in exts) print e, files[e] }' | while read ext files; do echo \"$files\" | xargs wc -l | tail -n1 | awk -v e=\"$ext\" '{ print e, $1 }'; done | sort | awk '{ count[$1] += $2; total += $2 } END { for (e in count) print e, count[e]; print \"total\", total }'"
   },
   "repository": {

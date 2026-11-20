@@ -1,0 +1,10 @@
+title: ActivityList
+type: object
+required:
+  - activities
+properties:
+  activities:
+    type: array
+    description: Ascending by date.
+    items:
+      $ref: Activity.yaml
