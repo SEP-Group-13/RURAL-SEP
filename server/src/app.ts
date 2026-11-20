@@ -8,8 +8,6 @@ import env from '@/utils/env.js'
 import { waitForDatabaseConnection } from '@/utils/database.js'
 import { errorHandler } from '@/routes/error.route.js'
 import healthRoutes from '@/routes/health.route.js'
-import participantsRoutes from '@/routes/participants.route.js'
-import metaRoutes from '@/routes/meta.route.js'
 import { newApiError } from '@shared/api/error.validator.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -52,8 +50,6 @@ app.use('/api', limiter)
 
 // Routes
 app.use('/api/health', healthRoutes)
-app.use('/api/v1/participants', participantsRoutes)
-app.use('/api/v1/meta', metaRoutes)
 // app.use('/api/user', userRoutes)
 
 // Unknown API routes return JSON
