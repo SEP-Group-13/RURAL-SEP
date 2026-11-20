@@ -4,6 +4,8 @@ import Button from '~/components/Button/Button'
 import { getLatestData, useViewPage, useViewSettings } from '~/data'
 import type { Column, SortRule, View, ViewRow } from '~/data'
 import ColumnPicker from './ColumnPicker'
+import ColumnFilterMenu from './ColumnFilterMenu'
+import type { FilterMenuPosition } from './ColumnFilterMenu'
 import { getColumnWidth } from './columnWidths'
 import { formatCell } from './formatCell'
 
@@ -78,6 +80,7 @@ export default function ParticipantTable({ view }: { view: View }) {
 }
 
 function HeaderCell({ view, column, sort }: { view: View; column: Column; sort: SortRule | null }) {
+  const [menu, setMenu] = useState<FilterMenuPosition | null>(null)
   const direction = sort?.columnKey === column.key ? sort.direction : null
 
   const changeSort = () => {
@@ -91,18 +94,27 @@ function HeaderCell({ view, column, sort }: { view: View; column: Column; sort: 
   }
 
   return (
-    <button
-      type="button"
-      onClick={changeSort}
-      title={`Sort by ${column.label}`}
-      className="flex items-center gap-1 min-w-0 text-left cursor-pointer"
-    >
-      <span className="truncate">{column.label}</span>
-      {column.source.kind === 'formula' && <span className="italic font-normal">f</span>}
-      {column.source.kind === 'simulation' && <span className="text-xs px-1 rounded bg-dashboard-surface">S</span>}
-      {direction === 'asc' && <ArrowUp className="size-[1em] shrink-0" />}
-      {direction === 'desc' && <ArrowDown className="size-[1em] shrink-0" />}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={changeSort}
+        onContextMenu={(event) => {
+          event.preventDefault()
+          setMenu({ x: event.clientX, y: event.clientY })
+        }}
+        title={`Sort by ${column.label} — right-click to filter`}
+        className="flex items-center gap-1 min-w-0 text-left cursor-pointer"
+      >
+        <span className="truncate">{column.label}</span>
+        {column.source.kind === 'formula' && <span className="italic font-normal">f</span>}
+        {column.source.kind === 'simulation' && <span className="text-xs px-1 rounded bg-dashboard-surface">S</span>}
+        {direction === 'asc' && <ArrowUp className="size-[1em] shrink-0" />}
+        {direction === 'desc' && <ArrowDown className="size-[1em] shrink-0" />}
+      </button>
+      {menu !== null && (
+        <ColumnFilterMenu view={view} column={column} position={menu} onClose={() => setMenu(null)} />
+      )}
+    </>
   )
 }
 
