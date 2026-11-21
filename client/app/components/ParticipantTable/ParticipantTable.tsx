@@ -1,8 +1,10 @@
-import { ArrowDown, ArrowUp } from 'lucide-react'
+import { ArrowDown, ArrowUp, Menu } from 'lucide-react'
 import { useState } from 'react'
 import Button from '~/components/Button/Button'
 import { getLatestData, useViewPage, useViewSettings } from '~/data'
 import type { Column, SortRule, View, ViewRow } from '~/data'
+import BurgerMenu from './BurgerMenu'
+import type { MenuPosition } from './BurgerMenu'
 import ColumnPicker from './ColumnPicker'
 import ColumnFilterMenu from './ColumnFilterMenu'
 import type { FilterMenuPosition } from './ColumnFilterMenu'
@@ -80,7 +82,8 @@ export default function ParticipantTable({ view }: { view: View }) {
 }
 
 function HeaderCell({ view, column, sort }: { view: View; column: Column; sort: SortRule | null }) {
-  const [menu, setMenu] = useState<FilterMenuPosition | null>(null)
+  const [burger, setBurger] = useState<MenuPosition | null>(null)
+  const [filterMenu, setFilterMenu] = useState<FilterMenuPosition | null>(null)
   const direction = sort?.columnKey === column.key ? sort.direction : null
 
   const changeSort = () => {
@@ -95,24 +98,42 @@ function HeaderCell({ view, column, sort }: { view: View; column: Column; sort: 
 
   return (
     <>
-      <button
-        type="button"
-        onClick={changeSort}
-        onContextMenu={(event) => {
-          event.preventDefault()
-          setMenu({ x: event.clientX, y: event.clientY })
-        }}
-        title={`Sort by ${column.label} — right-click to filter`}
-        className="flex items-center gap-1 min-w-0 text-left cursor-pointer"
-      >
-        <span className="truncate">{column.label}</span>
-        {column.source.kind === 'formula' && <span className="italic font-normal">f</span>}
-        {column.source.kind === 'simulation' && <span className="text-xs px-1 rounded bg-dashboard-surface">S</span>}
-        {direction === 'asc' && <ArrowUp className="size-[1em] shrink-0" />}
-        {direction === 'desc' && <ArrowDown className="size-[1em] shrink-0" />}
-      </button>
-      {menu !== null && (
-        <ColumnFilterMenu view={view} column={column} position={menu} onClose={() => setMenu(null)} />
+      <div className="flex items-center gap-1 min-w-0">
+        <button
+          type="button"
+          onClick={changeSort}
+          title={`Sort by ${column.label}`}
+          className="flex items-center gap-1 min-w-0 flex-1 text-left cursor-pointer"
+        >
+          <span className="truncate">{column.label}</span>
+          {column.source.kind === 'formula' && <span className="italic font-normal">f</span>}
+          {column.source.kind === 'simulation' && <span className="text-xs px-1 rounded bg-dashboard-surface">S</span>}
+          {direction === 'asc' && <ArrowUp className="size-[1em] shrink-0" />}
+          {direction === 'desc' && <ArrowDown className="size-[1em] shrink-0" />}
+        </button>
+        <button
+          type="button"
+          title={`Options for ${column.label}`}
+          onClick={(event) => setBurger({ x: event.clientX, y: event.clientY })}
+          className="shrink-0 cursor-pointer"
+        >
+          <Menu className="size-[1em]" />
+        </button>
+      </div>
+      {burger !== null && (
+        <BurgerMenu
+          position={burger}
+          onClose={() => setBurger(null)}
+          items={[
+            {
+              label: 'Filter…',
+              onClick: () => setFilterMenu({ x: burger.x, y: burger.y }),
+            },
+          ]}
+        />
+      )}
+      {filterMenu !== null && (
+        <ColumnFilterMenu view={view} column={column} position={filterMenu} onClose={() => setFilterMenu(null)} />
       )}
     </>
   )

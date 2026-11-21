@@ -11,13 +11,13 @@ import {
 } from '~/data'
 import type { Column, DatasetInfo, Filter, View } from '~/data'
 
-// you can get rid of this late this is for where the filter menu opens after you right click on the label
+// Position where the menu opens, in viewport coordinates (where the burger menu's "Filter…" was clicked).
 export interface FilterMenuPosition {
   x: number
   y: number
 }
 
-// So it basically works by rightclicking the label. The editor shown is decided by getFilterOperatorFor(column.dataType) from data/pipeline/filters.ts:
+// Opened from the burger menu (BurgerMenu.tsx) on a column label. The editor shown is decided by getFilterOperatorFor(column.dataType) from data/pipeline/filters.ts:
 // for number it chooses in 'between'    (min / max inputs)
 // for text it chooss whatever contains said text
 // for category its obvious
