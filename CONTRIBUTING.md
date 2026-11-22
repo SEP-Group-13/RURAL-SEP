@@ -181,8 +181,24 @@ feat(client): add participant table with pagination
 
 ## Linting, formatting and tests
 
-> TODO: ESLint, formatting and test setup will be documented here.
+All commands run from the repo root.
 
+| Command              | What it does                                   |
+| -------------------- | ---------------------------------------------- |
+| `npm run lint`       | Run ESLint on the whole repo                   |
+| `npm run lint:fix`   | Run ESLint and auto-fix what it can            |
+| `npm test`           | Run all tests once (this is what CI runs)      |
+| `npm run test:watch` | Re-run tests on file changes while developing  |
+| `npm run check`      | Lint + tests, run this before pushing          |
+
+### Writing tests
+
+- We use [Vitest](https://vitest.dev).
+- Put a test next to the file it tests, named `*.test.ts` (or `*.test.tsx` for components):
+  `server/src/utils/parseCsv.ts` has `server/src/utils/parseCsv.test.ts`
+- Tests are only picked up under `server/src/` and `client/app/`.
+- Import `describe`, `it` and `expect` from `'vitest'`.
+- Run a single workspace with `npx vitest --project server` (or `client`).
 ---
 
 ## Merging

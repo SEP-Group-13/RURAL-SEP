@@ -55,5 +55,11 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
 
-  // TBA tests
+  // ignore function line size for tests
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    rules: {
+      'max-lines-per-function': 'off',
+    },
+  },
 )
