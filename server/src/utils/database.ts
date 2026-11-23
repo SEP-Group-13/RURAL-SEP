@@ -3,7 +3,7 @@ import { setTimeout } from 'node:timers/promises'
 import env from '@/utils/env.js'
 
 // URF 5.1: verify database access without depending on an application schema.
-export async function checkDatabaseConnection(): Promise<void> {
+export const checkDatabaseConnection = async (): Promise<void> => {
   const client = new Client({
     host: env.PGHOST,
     port: Number(env.PGPORT),
@@ -33,7 +33,7 @@ export async function checkDatabaseConnection(): Promise<void> {
 }
 
 // Keep startup recoverable under tsx watch, which survives application exits.
-export async function waitForDatabaseConnection(): Promise<void> {
+export const waitForDatabaseConnection = async (): Promise<void> => {
   while (true) {
     try {
       await checkDatabaseConnection()

@@ -1,6 +1,5 @@
 title: View
 type: object
-additionalProperties: false
 description: |
   The settings that decide which participants and values a request covers. An empty view covers all
   participants and years. Formula and simulation names must differ from each other and from all other columns.

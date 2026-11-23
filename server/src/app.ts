@@ -2,12 +2,10 @@ import express from 'express'
 import http from 'http'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import rateLimit from 'express-rate-limit'
-import cookieParser from 'cookie-parser'
 import env from '@/utils/env.js'
 import { waitForDatabaseConnection } from '@/utils/database.js'
 import { errorHandler } from '@/routes/error.route.js'
-import { newApiError } from '@shared/api/error.validator.js'
+import { notFound } from '@/utils/httpResponses.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const clientDir = path.resolve(__dirname, '../../dist/client/client')
@@ -28,7 +26,6 @@ const clientDir = path.resolve(__dirname, '../../dist/client/client')
 // Midlewares
 app.use(express.static(clientDir))  // Built React SPA (npm run build:client)
 app.use(express.static(path.resolve(__dirname, "../../public")))    // Will eventually be replaced by nginx or equivalent
-// app.use(cookieParser()) // Allows parsing of cookies
 app.use(express.json()) // Allows parsing of application/json
 
 // Stops browsers, proxies, from caching API responses
@@ -37,23 +34,13 @@ app.use('/api', (req, rest, next) => {
   next()
 })
 
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  standardHeaders: 'draft-8',
-  legacyHeaders: false,
-  message: 'Too many requests were received, try again later',
-})
-app.use('/api', limiter)
 
 
 // Routes
 // app.use('/api/user', userRoutes)
 
-// Unknown API routes return JSON
-app.use('/api', (req, res) => {
-  res.status(404).json(newApiError('Not found'))
-})
+// Unknown API routes return JSON 404
+app.use('/api', (_req, res) => { notFound(res) })
 
 // SPA fallback. other paths gets index.html so client-side routes survive a refresh.
 // fall back to Express's default 404 if the client hasn't been built

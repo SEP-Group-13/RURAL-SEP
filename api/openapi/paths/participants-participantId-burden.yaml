@@ -1,7 +1,7 @@
 parameters:
   - $ref: ../components/parameters/ParticipantId.yaml
 get:
-  operationId: getParticipantBurden
+  operationId: getParticipantsParticipantIdBurden
   tags:
     - Participants
   summary: Get the burden of a participant per year and cumulatively

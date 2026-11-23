@@ -1,5 +1,5 @@
 post:
-  operationId: queryChartCounts
+  operationId: postChartsCounts
   tags:
     - Charts
   summary: Count participants per value of a column
