@@ -4,16 +4,18 @@ import Button from '~/components/Button/Button'
 import { getLatestData, useViewPage, useViewSettings } from '~/data'
 import type { Column, SortRule, View, ViewRow } from '~/data'
 import BurgerMenu from './BurgerMenu'
-import type { MenuPosition } from './BurgerMenu'
+import type { BurgerMenuTab, MenuPosition } from './BurgerMenu'
 import ColumnPicker from './ColumnPicker'
 import ColumnFilterMenu from './ColumnFilterMenu'
-import type { FilterMenuPosition } from './ColumnFilterMenu'
+import ColumnSortMenu from './ColumnSortMenu'
+import AddBurdenFormulaMenu from './AddBurdenFormulaMenu'
 import { getColumnWidth } from './columnWidths'
 import { formatCell } from './formatCell'
 
 export default function ParticipantTable({ view }: { view: View }) {
   const [pageNumber, setPageNumber] = useState(1)
   const [showColumnPicker, setShowColumnPicker] = useState(false)
+  const [tableMenu, setTableMenu] = useState<MenuPosition | null>(null)
   const settings = useViewSettings(view)
   const { state, retry } = useViewPage(view, pageNumber)
 
@@ -37,7 +39,18 @@ export default function ParticipantTable({ view }: { view: View }) {
         <Button onClick={() => setShowColumnPicker(!showColumnPicker)}>
           {showColumnPicker ? 'Hide columns' : 'Columns'}
         </Button>
+        <Button
+          onClick={(event) => {
+            const rect = event.currentTarget.getBoundingClientRect()
+            setTableMenu({ x: rect.left, y: rect.bottom - 8 })
+          }}
+        >
+          Add formula
+        </Button>
       </div>
+      {tableMenu !== null && (
+        <BurgerMenu position={tableMenu} onClose={() => setTableMenu(null)} tabs={tableMenuTabs(view)} />
+      )}
       {showColumnPicker && <ColumnPicker view={view} />}
 
       <div className={`overflow-x-auto ${loading ? 'opacity-60' : ''}`}>
@@ -81,9 +94,32 @@ export default function ParticipantTable({ view }: { view: View }) {
   )
 }
 
+function columnMenuTabs(view: View, column: Column): BurgerMenuTab[] {
+  return [
+    {
+      label: 'Filter',
+      content: (close) => <ColumnFilterMenu view={view} column={column} onClose={close} />,
+    },
+    {
+      label: 'Sort',
+      content: (close) => <ColumnSortMenu view={view} column={column} onClose={close} />,
+    },
+  ]
+}
+
+// Menu configuration for the table-wide burger menu (the "Add formula" button above the table).
+// Each entry is one tab: the label is the tab title, content is the component shown while that tab is selected.
+function tableMenuTabs(view: View): BurgerMenuTab[] {
+  return [
+    {
+      label: 'Burden formula',
+      content: (close) => <AddBurdenFormulaMenu view={view} onClose={close} />,
+    },
+  ]
+}
+
 function HeaderCell({ view, column, sort }: { view: View; column: Column; sort: SortRule | null }) {
   const [burger, setBurger] = useState<MenuPosition | null>(null)
-  const [filterMenu, setFilterMenu] = useState<FilterMenuPosition | null>(null)
   const direction = sort?.columnKey === column.key ? sort.direction : null
 
   const changeSort = () => {
@@ -121,19 +157,7 @@ function HeaderCell({ view, column, sort }: { view: View; column: Column; sort: 
         </button>
       </div>
       {burger !== null && (
-        <BurgerMenu
-          position={burger}
-          onClose={() => setBurger(null)}
-          items={[
-            {
-              label: 'Filter…',
-              onClick: () => setFilterMenu({ x: burger.x, y: burger.y }),
-            },
-          ]}
-        />
-      )}
-      {filterMenu !== null && (
-        <ColumnFilterMenu view={view} column={column} position={filterMenu} onClose={() => setFilterMenu(null)} />
+        <BurgerMenu position={burger} onClose={() => setBurger(null)} tabs={columnMenuTabs(view, column)} />
       )}
     </>
   )

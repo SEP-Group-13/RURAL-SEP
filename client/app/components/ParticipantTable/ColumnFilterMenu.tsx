@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import Button from '~/components/Button/Button'
 import {
@@ -11,37 +11,23 @@ import {
 } from '~/data'
 import type { Column, DatasetInfo, Filter, View } from '~/data'
 
-// Position where the menu opens, in viewport coordinates (where the burger menu's "Filter…" was clicked).
-export interface FilterMenuPosition {
-  x: number
-  y: number
-}
-
-// Opened from the burger menu (BurgerMenu.tsx) on a column label. The editor shown is decided by getFilterOperatorFor(column.dataType) from data/pipeline/filters.ts:
+// The "Filter" tab of the column burger menu (BurgerMenu.tsx, configured in columnMenuTabs in ParticipantTable.tsx).
+// It is only the tab's content: the burger menu owns the popup itself (position, backdrop, Escape, tab bar).
+// onClose closes the whole burger menu. The editor shown is decided by getFilterOperatorFor(column.dataType) from data/pipeline/filters.ts:
 // for number it chooses in 'between'    (min / max inputs)
 // for text it chooss whatever contains said text
 // for category its obvious
-// apply calls view.setFilter(...), which runs validateFilter and returns { ok: false, error } on failure. 
+// apply calls view.setFilter(...), which runs validateFilter and returns { ok: false, error } on failure.
 // The stored filter goes through view.toQuery().filters in RowSource
 
 
-export default function ColumnFilterMenu({view, column, position, onClose}
-  : {view: View; column: Column; position: FilterMenuPosition; onClose: () => void}) 
+export default function ColumnFilterMenu({view, column, onClose}
+  : {view: View; column: Column; onClose: () => void})
   {
   const settings = useViewSettings(view)
   const datasetInfo = getLatestData(useDatasetInfo(dataHandler).state)
   const current = settings.filters.find((filter) => filter.columnKey === column.key)
   const operator = getFilterOperatorFor(column.dataType)
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [onClose])
 
   const apply = (filter: Filter): string | null => {
     const result = view.setFilter(filter)
@@ -53,40 +39,24 @@ export default function ColumnFilterMenu({view, column, position, onClose}
   }
 
   return (
-    <>
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-        onContextMenu={(event) => {
-          event.preventDefault()
-          onClose()
-        }}
-      />
-      <div
-        className="fixed z-50 w-64 p-3 bg-sidebar-surface"
-        style={{ left: position.x, top: position.y }}
-        onClick={(event) => event.stopPropagation()}
-        onContextMenu={(event) => event.stopPropagation()}
-      >
-        <p className="font-semibold mb-2 truncate">{column.label}</p>
-        {operator === 'between' && <RangeEditor column={column} current={current} apply={apply} />}
-        {operator === 'in' && (
-          <CategoryEditor column={column} datasetInfo={datasetInfo} current={current} apply={apply} />
-        )}
-        {operator === 'startsWith' && <TextEditor column={column} current={current} apply={apply} />}
-        {current !== undefined && (
-          <Button
-            className="w-full mt-2"
-            onClick={() => {
-              view.removeFilter(column.key)
-              onClose()
-            }}
-          >
-            Clear filter
-          </Button>
-        )}
-      </div>
-    </>
+    <div>
+      {operator === 'between' && <RangeEditor column={column} current={current} apply={apply} />}
+      {operator === 'in' && (
+        <CategoryEditor column={column} datasetInfo={datasetInfo} current={current} apply={apply} />
+      )}
+      {operator === 'startsWith' && <TextEditor column={column} current={current} apply={apply} />}
+      {current !== undefined && (
+        <Button
+          className="w-full mt-2"
+          onClick={() => {
+            view.removeFilter(column.key)
+            onClose()
+          }}
+        >
+          Clear filter
+        </Button>
+      )}
+    </div>
   )
 }
 
