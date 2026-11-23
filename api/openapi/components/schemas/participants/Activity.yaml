@@ -38,9 +38,6 @@ properties:
     type:
       - string
       - 'null'
-    enum:
-      - completed
-      - notCompleted
   durationMinutes:
     type:
       - number
@@ -51,3 +48,6 @@ properties:
       - 'null'
   status:
     type: string
+    enum:
+      - completed
+      - notCompleted
