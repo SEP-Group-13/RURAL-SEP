@@ -53,11 +53,11 @@ async function respond(produce: () => JsonBodyType): Promise<Response> {
 }
 
 export const handlers = [
-  http.get(url('/meta'), () => respond(() => mockBackend.getMeta())),
+  http.get(url('/meta/info'), () => respond(() => mockBackend.getMeta())),
 
-  http.get(url('/columns'), () => respond(() => ({ columns: mockBackend.listColumns() }))),
+  http.get(url('/meta/columns'), () => respond(() => ({ columns: mockBackend.listColumns() }))),
 
-  http.get(url('/burden-presets'), () => respond(() => ({ presets: mockBackend.getBurdenPresets() }))),
+  http.get(url('/meta/burden-presets'), () => respond(() => ({ presets: mockBackend.getBurdenPresets() }))),
 
   http.post(url('/participants/query'), async ({ request }) => {
     const body = (await request.json()) as QueryParticipantsRequest
