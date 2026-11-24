@@ -1,25 +1,44 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { z } from 'zod'
 import { ApiError, isAbortError } from './ApiError'
 import { call } from './httpClient'
 
 const abortError = () => new DOMException('The operation was aborted.', 'AbortError')
 
 describe('call', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  /** call() looks fetch up per request, so stubbing it is enough (relative URLs: see test/setup.ts). */
+  const stubFetch = (fetch: () => Promise<Response>) => vi.stubGlobal('fetch', vi.fn(fetch))
+
   it('rethrows an abort unchanged instead of reporting a network error', async () => {
     const error = abortError()
-    await expect(call(Promise.reject(error))).rejects.toBe(error)
+    stubFetch(() => Promise.reject(error))
+    await expect(call(z.unknown(), '/meta/info')).rejects.toBe(error)
   })
 
   it('turns other fetch failures into a network ApiError', async () => {
-    const result = call(Promise.reject(new TypeError('Failed to fetch')))
+    stubFetch(() => Promise.reject(new TypeError('Failed to fetch')))
+    const result = call(z.unknown(), '/meta/info')
     await expect(result).rejects.toBeInstanceOf(ApiError)
     await expect(result).rejects.toMatchObject({ kind: 'network', status: null })
   })
 
   it('turns an error response into an ApiError with the problem body', async () => {
     const problem = { type: 'urn:problem:invalid-formula', title: 'Invalid formula', detail: 'Unknown column [X].' }
-    const result = call(Promise.resolve({ error: problem, response: new Response(null, { status: 422 }) }))
+    stubFetch(async () => Response.json(problem, { status: 422 }))
+    const result = call(z.unknown(), '/participants/query')
     await expect(result).rejects.toMatchObject({ kind: 'invalidQuery', status: 422, message: 'Unknown column [X].', problem })
+  })
+
+  it('rejects a response that does not match the schema', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    stubFetch(async () => Response.json({ columns: 'not a list' }))
+    const result = call(z.object({ columns: z.array(z.string()) }), '/meta/columns')
+    await expect(result).rejects.toMatchObject({ kind: 'unknown', status: 200 })
   })
 })
 
