@@ -1,5 +1,5 @@
 get:
-  operationId: listColumns
+  operationId: getMetaColumns
   tags:
     - Meta
   summary: List the columns of the participant data table

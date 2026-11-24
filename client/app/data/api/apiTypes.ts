@@ -1,20 +1,21 @@
-import type { components, paths } from '@shared/api/generated/api'
+import type * as S from '@shared/api/generated/schemas'
 
-export type { paths }
-type S = components['schemas']
-export type ApiView = S['View']
-export type ApiFilter = S['Filter']
-export type QueryParticipantsRequest = S['QueryParticipantsRequest']
-export type ParticipantPage = S['ParticipantPage']
-export type ApiMeta = S['Meta']
-export type ApiColumn = S['Column']
-export type ApiParticipant = S['Participant']
-export type ParticipantBurden = S['ParticipantBurden']
-export type ApiActivity = S['Activity']
-export type ParticipantSearchResult = S['ParticipantSearchResult']
-export type BurdenPreset = S['BurdenPreset']
-export type CountChartRequest = S['CountChartRequest']
-export type CountChartResponse = S['CountChartResponse']
-export type HistogramRequest = S['HistogramRequest']
-export type HistogramResponse = S['HistogramResponse']
-export type Problem = S['Problem']
+// Requests: what the client sends (Zod input types)
+export type ApiView = S.View
+export type ApiFilter = S.Filter
+export type QueryParticipantsRequest = S.QueryParticipantsRequest
+export type CountChartRequest = S.CountChartRequest
+export type HistogramRequest = S.HistogramRequest
+
+// Responses: what the client receives after validation (Zod output types)
+export type ParticipantPage = S.ParticipantPageOutput
+export type ApiMeta = S.MetaOutput
+export type ApiColumn = S.ColumnOutput
+export type ApiParticipant = S.ParticipantOutput
+export type ParticipantBurden = S.ParticipantBurdenOutput
+export type ApiActivity = S.ActivityOutput
+export type ParticipantSearchResult = S.ParticipantSearchResultOutput
+export type BurdenPreset = S.BurdenPresetOutput
+export type CountChartResponse = S.CountChartResponseOutput
+export type HistogramResponse = S.HistogramResponseOutput
+export type Problem = S.ProblemOutput

@@ -1,6 +1,6 @@
 # Data layer: how to use it
 
-All data comes from the API (`/api/v1`). The server filters, sorts, computes formulas and bands, and pages.
+All data comes from the API (`/api`). The server filters, sorts, computes formulas and bands, and pages.
 The frontend only describes **what** it wants (a view) and shows the result. Import everything from `~/data`.
 
 In development the API is mocked with MSW (`client/app/mocks/`, on when `VITE_MOCK_API=true`), so no server is needed.
@@ -92,7 +92,8 @@ Every data hook returns `{ state, retry }`:
 
 ## Adding a new kind of data
 
-1. Add the call to `ApiConsumer`/`HttpApi` if the endpoint is new (types come from `shared/api/generated/api.d.ts`).
+1. Add the call to `ApiConsumer`/`HttpApi` if the endpoint is new, passing its response schema from
+   `shared/api/generated/api.zod.ts` to `call()`, which validates every response. Export any new types from `api/apiTypes.ts`.
 2. Put the method on a handler (`DataHandler`, `ChartHandler`) and map API types to UI types in `api/mappers/`.
 3. Wrap it in a hook in `react/useView.ts` with `useDataRequest`:
 

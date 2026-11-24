@@ -1,36 +1,38 @@
+import * as Api from '@shared/api/generated/api.zod'
 import type { ApiConsumer, RequestOptions } from './ApiConsumer'
-import { call, http } from './httpClient'
+import { call } from './httpClient'
 
-const participantPath = (participantId: string, options?: RequestOptions) => ({
-  params: { path: { participantId } },
-  signal: options?.signal,
-})
+const signal = (options?: RequestOptions) => ({ signal: options?.signal })
+const participant = (participantId: string) => `/participants/${encodeURIComponent(participantId)}`
 
 /** ApiConsumer that talks to the real server (or to MSW in development). */
 export const httpApi: ApiConsumer = {
-  getMeta: (options) => call(http.GET('/meta', { signal: options?.signal })),
+  getMeta: (options) => call(Api.GetMetaInfoResponse, '/meta/info', signal(options)),
 
-  listColumns: async (options) => (await call(http.GET('/columns', { signal: options?.signal }))).columns,
+  listColumns: async (options) => (await call(Api.GetMetaColumnsResponse, '/meta/columns', signal(options))).columns,
 
   getBurdenPresets: async (options) =>
-    (await call(http.GET('/burden-presets', { signal: options?.signal }))).presets,
+    (await call(Api.GetMetaBurdenPresetsResponse, '/meta/burden-presets', signal(options))).presets,
 
-  queryParticipants: (body, options) => call(http.POST('/participants/query', { body, signal: options?.signal })),
+  queryParticipants: (body, options) =>
+    call(Api.PostParticipantsQueryResponse, '/participants/query', { method: 'POST', body, ...signal(options) }),
 
   searchParticipants: (query, limit, options) =>
-    call(http.GET('/participants/search', { params: { query: { query, limit } }, signal: options?.signal })),
+    call(Api.GetParticipantsSearchResponse, '/participants/search', { query: { query, limit }, ...signal(options) }),
 
   getParticipant: (participantId, options) =>
-    call(http.GET('/participants/{participantId}', participantPath(participantId, options))),
+    call(Api.GetParticipantsParticipantIdResponse, participant(participantId), signal(options)),
 
   getParticipantBurden: (participantId, options) =>
-    call(http.GET('/participants/{participantId}/burden', participantPath(participantId, options))),
+    call(Api.GetParticipantsParticipantIdBurdenResponse, `${participant(participantId)}/burden`, signal(options)),
 
   listParticipantActivities: async (participantId, options) =>
-    (await call(http.GET('/participants/{participantId}/activities', participantPath(participantId, options))))
+    (await call(Api.GetParticipantsParticipantIdActivitiesResponse, `${participant(participantId)}/activities`, signal(options)))
       .activities,
 
-  queryChartCounts: (body, options) => call(http.POST('/charts/counts', { body, signal: options?.signal })),
+  queryChartCounts: (body, options) =>
+    call(Api.PostChartsCountsResponse, '/charts/counts', { method: 'POST', body, ...signal(options) }),
 
-  queryChartHistogram: (body, options) => call(http.POST('/charts/histogram', { body, signal: options?.signal })),
+  queryChartHistogram: (body, options) =>
+    call(Api.PostChartsHistogramResponse, '/charts/histogram', { method: 'POST', body, ...signal(options) }),
 }
