@@ -46,11 +46,7 @@ export default function ParticipantBurdenTable({
     const columns: BurdenColumn[] = [
         { key: "activity", label: "Burden", width: "minmax(8rem,1.2fr)" },
         { key: "burden", label: "Type", width: "minmax(7rem,1fr)" },
-        ...years.map((year) => ({
-            key: `year-${year}`,
-            label: String(year),
-            width: "minmax(5rem,0.8fr)",
-        })),
+        ...years.map((year) => ({key: `year-${year}`, label: String(year), width: "minmax(5rem,0.8fr)",})),
         { key: "total", label: "Total", width: "minmax(5rem,0.8fr)" },
     ]
     const gridTemplateColumns = columns.map((column) => column.width).join(" ")
@@ -79,24 +75,15 @@ export default function ParticipantBurdenTable({
 
     const activityRows: BurdenRow[] = examElements.map((examElement) => {
         const timeForYear = (year: number) =>
-            sumNumbers(
-                timeByExamElement
-                    .filter((entry) => entry.year === year && entry.examElement === examElement)
-                    .map((entry) => entry.minutes),
+            sum(timeByExamElement.filter((entry) => entry.year === year && entry.examElement === examElement).map((entry) => entry.minutes),
             )
 
         return {
             key: examElement,
             category: examElement,
             measure: "Time (min)",
-            values: years.map((year) => roundNumber(timeForYear(year), 1)),
-            total: roundNumber(
-                sumNumbers(
-                    timeByExamElement
-                        .filter((entry) => entry.examElement === examElement)
-                        .map((entry) => entry.minutes),
-                ),
-                1,
+            values: years.map(timeForYear),
+            total: sum(timeByExamElement.filter((entry) => entry.examElement === examElement).map((entry) => entry.minutes),
             ),
         }
     })
@@ -107,7 +94,7 @@ export default function ParticipantBurdenTable({
             category: "Participation Burden",
             measure: "Core exam + Additional",
             values: [],
-            total: sumNumbers(
+            total: sum(
                 sortedYearlyTotals.map(
                     (yearlyTotal) => yearlyTotal.coreExamCompleted + yearlyTotal.additionalStudies,
                 ),
@@ -120,7 +107,7 @@ export default function ParticipantBurdenTable({
             category: "Radiation Burden",
             measure: "Radiation (mSv)",
             values: radiationByYear,
-            total: roundNumber(sumNumbers(radiationByYear), 2),
+            total: sum(radiationByYear),
             bold: true,
         },
         {
@@ -128,15 +115,15 @@ export default function ParticipantBurdenTable({
             category: "Contact Frequency",
             measure: "Emails + SMS",
             values: contactFrequencyByYear,
-            total: sumNumbers(contactFrequencyByYear),
+            total: sum(contactFrequencyByYear),
             bold: true,
         },
         {
             key: "time-burden",
             category: "Time Burden",
             measure: "Time (min)",
-            values: timeByYear.map((minutes) => roundNumber(minutes, 1)),
-            total: roundNumber(sumNumbers(timeByYear), 1),
+            values: timeByYear,
+            total: sum(timeByYear),
             bold: true,
         },
 
@@ -195,18 +182,10 @@ function BurdenTableRow({
     )
 }
 
-function sumNumbers(values: number[]): number {
+function sum(values: number[]): number {
     let sum = 0
     for (const value of values) {
         sum += value
     }
     return sum
-}
-
-function roundNumber(value: number, decimals: number): number {
-    const decimalPlaceMultiplier = 10 ** decimals
-    const valueAtTargetPrecision = value * decimalPlaceMultiplier
-    const roundedValue = Math.round(valueAtTargetPrecision)
-
-    return roundedValue / decimalPlaceMultiplier
 }

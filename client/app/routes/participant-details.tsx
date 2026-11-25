@@ -1,24 +1,39 @@
-import { useLoaderData } from "react-router"
-import type { Route } from "./+types/participant-details"
+import { useParams } from "react-router"
+import Button from "~/components/Button/Button"
 import ParticipantActivityTable from "~/components/ParticipantDetails/ParticipantActivityTable"
 import ParticipantBurdenTable from "~/components/ParticipantDetails/ParticipantBurdenTable"
 import ParticipantSummary from "~/components/ParticipantDetails/ParticipantSummary"
-import { api } from "~/data"
-
-export function clientLoader({ params }: Route.ClientLoaderArgs) {
-    const id = params.participantId
-    if (!id) {
-        throw new Error("Missing participant ID.")
-    }
-
-    return api.getParticipant(id)
-}
+import { dataHandler, getLatestData, useParticipantDetails } from "~/data"
 
 export default function ParticipantDetailsPage() {
-    const participant = useLoaderData<typeof clientLoader>()
+    const { participantId } = useParams()
+
+    return <ParticipantDetails participantId={participantId!} />
+}
+
+function ParticipantDetails({ participantId }: { participantId: string }) {
+    const { state, retry } = useParticipantDetails(dataHandler, participantId)
+    const latestParticipant = getLatestData(state)
+    const participant =
+        latestParticipant?.participantId === participantId
+            ? latestParticipant
+            : null
+
+    if (state.status === "error") {
+        return (
+            <div className="flex items-center gap-3 p-4">
+                <p>404: {state.error}</p>
+                <Button onClick={retry}>Retry</Button>
+            </div>
+        )
+    }
+
+    if (participant === null) {
+        return <p className="p-4">Loading participant…</p>
+    }
 
     return (
-        <div className="flex-row p-4">
+        <div className="flex-row p-4" key={participantId}>
             <div className="grid grid-cols-[1fr_3fr] gap-5 min-h-fit">
                 <ParticipantSummary participant={participant} />
                 <ParticipantBurdenTable
