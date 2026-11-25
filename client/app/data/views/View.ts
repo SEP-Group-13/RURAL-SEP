@@ -1,3 +1,4 @@
+import type { RequestOptions } from '../api/ApiConsumer'
 import { createUniqueKey, isLabelInUse } from '../columns/columnHelpers'
 import { PREDEFINED_FORMULAS } from '../columns/predefinedFormulas'
 import type { PredefinedFormulaName } from '../columns/predefinedFormulas'
@@ -12,7 +13,7 @@ import type { Column } from '../types/column'
 import type { Filter } from '../types/filter'
 import { failure, success } from '../types/result'
 import type { ActionResult } from '../types/result'
-import type { RowPage, ViewRow } from '../types/rows'
+import type { RowPage } from '../types/rows'
 import type { SortDirection, SortRule, ViewQuery, ViewSettings, YearSelection } from '../types/view'
 import { getQueryFromSettings } from './viewSettings'
 
@@ -78,12 +79,8 @@ export class View {
     return getQueryFromSettings(this.settings)
   }
 
-  getPage(pageNumber: number): Promise<RowPage> {
-    return this.rowSource.getPage(PAGE_SIZE, pageNumber, this.toQuery())
-  }
-
-  getAllRows(): Promise<ViewRow[]> {
-    return this.rowSource.getAllRows(this.toQuery())
+  getPage(pageNumber: number, options?: RequestOptions): Promise<RowPage> {
+    return this.rowSource.getPage(PAGE_SIZE, pageNumber, this.toQuery(), options)
   }
 
   showColumn(columnKey: string): ActionResult {

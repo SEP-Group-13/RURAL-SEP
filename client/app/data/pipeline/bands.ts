@@ -1,17 +1,4 @@
 import type { Band } from '../types/band'
-import type { CellValue } from '../types/rows'
-
-export function findBandLabel(value: CellValue, bands: Band[]): string | null {
-  if (typeof value !== 'number') {
-    return null
-  }
-  for (const band of bands) {
-    if (band.below === null || value < band.below) {
-      return band.label
-    }
-  }
-  return null
-}
 
 export function validateBands(bands: Band[]): string | null {
   if (bands.length === 0) {

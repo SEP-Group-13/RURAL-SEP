@@ -1,6 +1,5 @@
 import type { Column, ColumnDataType } from '../types/column'
 import type { Filter, FilterOperator } from '../types/filter'
-import type { CellValue, ViewRow } from '../types/rows'
 
 export function getFilterOperatorFor(dataType: ColumnDataType): FilterOperator {
   switch (dataType) {
@@ -10,41 +9,6 @@ export function getFilterOperatorFor(dataType: ColumnDataType): FilterOperator {
       return 'in'
     case 'text':
       return 'startsWith'
-  }
-}
-
-export function matchesAllFilters(row: ViewRow, filters: Filter[]): boolean {
-  return filters.every((filter) => {
-    const value = row.cells[filter.columnKey] ?? null
-    return matchesFilter(value, filter)
-  })
-}
-
-export function matchesFilter(value: CellValue, filter: Filter): boolean {
-  if (value === null) {
-    return false
-  }
-
-  switch (filter.operator) {
-    case 'in':
-      return filter.value.includes(String(value))
-
-    case 'between': {
-      if (typeof value !== 'number') {
-        return false
-      }
-      const { min, max } = filter.value
-      if (min !== null && value < min) {
-        return false
-      }
-      if (max !== null && value > max) {
-        return false
-      }
-      return true
-    }
-
-    case 'startsWith':
-      return String(value).toLowerCase().startsWith(filter.value.trim().toLowerCase())
   }
 }
 

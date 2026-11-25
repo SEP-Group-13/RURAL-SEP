@@ -1,5 +1,5 @@
-import type { CellValue, ViewRow } from '../types/rows'
-import type { SortRule } from '../types/view'
+import type { CellValue, ViewRow } from '../../data/types/rows'
+import type { SortRule } from '../../data/types/view'
 
 export function sortRows(rows: ViewRow[], sort: SortRule | null): ViewRow[] {
   const copy = [...rows]
