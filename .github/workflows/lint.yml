@@ -1,0 +1,44 @@
+# quality checks (4/11 checks required by the SEP quality requirements are done via CI
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  eslint:
+    name: 1. ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+  simian:
+    name: 2. Simian
+    needs: eslint
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Cache Simian
+        uses: actions/cache@v4
+        with:
+          path: .simian
+          key: simian-${{ hashFiles('scripts/simian.sh') }}
+
+      - run: bash scripts/simian.sh
