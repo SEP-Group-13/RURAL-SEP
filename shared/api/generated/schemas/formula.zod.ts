@@ -19,7 +19,7 @@ import { ColumnName } from './columnName.zod';
 
 export const Formula = zod.object({
   "name": ColumnName,
-  "expression": zod.string().describe('Numbers, column names in square brackets, `+ - * /` and parentheses.\nThe result is `null` when a value is missing or on division by zero.\n')
+  "expression": zod.string().describe('A math.js expression with column names in square brackets. For example, use `+ - * /`, parentheses,\n`^` for powers and `sqrt(...)` or `max(...)` for numeric functions.\nThe result is `null` when a referenced column has no finite numeric value, on division by zero\nor when evaluation fails to produce a finite number.\n')
 }).describe('A numeric column calculated from other columns. The column shows the result for the selected years\ncombined; its band column uses the values of each year.\n');
 
 export type Formula = zod.input<typeof Formula>;

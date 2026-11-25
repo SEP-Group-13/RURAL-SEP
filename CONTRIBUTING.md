@@ -183,6 +183,8 @@ feat(client): add participant table with pagination
 
 > TODO: ESLint, formatting and test setup will be documented here.
 
+Run the formula parser tests with `node --import tsx --test server/src/utils/formula.parser.test.ts`.
+
 ---
 
 ## Merging

@@ -12,7 +12,10 @@ properties:
   expression:
     type: string
     description: |
-      Numbers, column names in square brackets, `+ - * /` and parentheses.
-      The result is `null` when a value is missing or on division by zero.
+      A math.js expression with column names in square brackets. For example, use `+ - * /`, parentheses,
+      `^` for powers and `sqrt(...)` or `max(...)` for numeric functions.
+      The result is `null` when a referenced column has no finite numeric value, on division by zero
+      or when evaluation fails to produce a finite number.
     examples:
       - '[Time burden (min)] / 360 + [Radiation burden (mSv)] / 10'
+      - 'sqrt(([Time burden (min)] / 360)^2 + ([Radiation burden (mSv)] / 10)^2)'
