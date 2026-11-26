@@ -196,6 +196,8 @@ Some metrics in ESlint serve as rough approximations while others are just conve
 
 > TODO: formatting and test setup will be documented here.
 
+Run the formula parser tests with `node --import tsx --test server/src/utils/formula.parser.test.ts`.
+
 ---
 
 ## Merging
