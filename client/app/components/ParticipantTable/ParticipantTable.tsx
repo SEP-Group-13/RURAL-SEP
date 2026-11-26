@@ -1,10 +1,15 @@
-import { ArrowDown, ArrowUp } from 'lucide-react'
+import { ArrowDown, ArrowUp, Menu } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import Button from '~/components/Button/Button'
 import { bandCellKey, getLatestData, useViewPage, useViewSettings } from '~/data'
 import type { Column, SortRule, View, ViewRow, ViewSettings } from '~/data'
+import BurgerMenu from './BurgerMenu'
+import type { BurgerMenuTab, MenuPosition } from './BurgerMenu'
 import ColumnPicker from './ColumnPicker'
+import ColumnFilterMenu from './ColumnFilterMenu'
+import ColumnSortMenu from './ColumnSortMenu'
+import AddBurdenFormulaMenu from './AddBurdenFormulaMenu'
 import { getColumnWidth } from './columnWidths'
 import { formatCell } from './formatCell'
 
@@ -31,6 +36,7 @@ function toDisplayColumns(columns: Column[], bandYears: Record<string, number[]>
 
 export default function ParticipantTable({ view }: { view: View }) {
   const [showColumnPicker, setShowColumnPicker] = useState(false)
+  const [tableMenu, setTableMenu] = useState<MenuPosition | null>(null)
   const settings = useViewSettings(view)
 
   // Any change to the view starts again at page 1: a page number from before a filter change may be
@@ -64,7 +70,18 @@ export default function ParticipantTable({ view }: { view: View }) {
         <Button onClick={() => setShowColumnPicker(!showColumnPicker)}>
           {showColumnPicker ? 'Hide columns' : 'Columns'}
         </Button>
+        <Button
+          onClick={(event) => {
+            const rect = event.currentTarget.getBoundingClientRect()
+            setTableMenu({ x: rect.left, y: rect.bottom - 8 })
+          }}
+        >
+          Add formula
+        </Button>
       </div>
+      {tableMenu !== null && (
+        <BurgerMenu position={tableMenu} onClose={() => setTableMenu(null)} tabs={tableMenuTabs(view)} />
+      )}
       {showColumnPicker && <ColumnPicker view={view} />}
 
       <div className={`overflow-x-auto ${loading ? 'opacity-60' : ''}`}>
@@ -114,7 +131,32 @@ export default function ParticipantTable({ view }: { view: View }) {
   )
 }
 
+function columnMenuTabs(view: View, column: Column): BurgerMenuTab[] {
+  return [
+    {
+      label: 'Filter',
+      content: (close) => <ColumnFilterMenu view={view} column={column} onClose={close} />,
+    },
+    {
+      label: 'Sort',
+      content: (close) => <ColumnSortMenu view={view} column={column} onClose={close} />,
+    },
+  ]
+}
+
+// Menu configuration for the table-wide burger menu (the "Add formula" button above the table).
+// Each entry is one tab: the label is the tab title, content is the component shown while that tab is selected.
+function tableMenuTabs(view: View): BurgerMenuTab[] {
+  return [
+    {
+      label: 'Burden formula',
+      content: (close) => <AddBurdenFormulaMenu view={view} onClose={close} />,
+    },
+  ]
+}
+
 function HeaderCell({ view, column, title, sort }: { view: View; column: Column; title: string; sort: SortRule | null }) {
+  const [burger, setBurger] = useState<MenuPosition | null>(null)
   const direction = sort?.columnKey === column.key ? sort.direction : null
 
   const changeSort = () => {
@@ -128,18 +170,33 @@ function HeaderCell({ view, column, title, sort }: { view: View; column: Column;
   }
 
   return (
-    <button
-      type="button"
-      onClick={changeSort}
-      title={`Sort by ${column.label}`}
-      className="flex items-center gap-1 min-w-0 text-left cursor-pointer"
-    >
-      <span className="truncate">{title}</span>
-      {column.source.kind === 'formula' && <span className="italic font-normal">f</span>}
-      {column.source.kind === 'simulation' && <span className="text-xs px-1 rounded bg-dashboard-surface">S</span>}
-      {direction === 'asc' && <ArrowUp className="size-[1em] shrink-0" />}
-      {direction === 'desc' && <ArrowDown className="size-[1em] shrink-0" />}
-    </button>
+    <>
+      <div className="flex items-center gap-1 min-w-0">
+        <button
+          type="button"
+          onClick={changeSort}
+          title={`Sort by ${column.label}`}
+          className="flex items-center gap-1 min-w-0 flex-1 text-left cursor-pointer"
+        >
+          <span className="truncate">{title}</span>
+          {column.source.kind === 'formula' && <span className="italic font-normal">f</span>}
+          {column.source.kind === 'simulation' && <span className="text-xs px-1 rounded bg-dashboard-surface">S</span>}
+          {direction === 'asc' && <ArrowUp className="size-[1em] shrink-0" />}
+          {direction === 'desc' && <ArrowDown className="size-[1em] shrink-0" />}
+        </button>
+        <button
+          type="button"
+          title={`Options for ${column.label}`}
+          onClick={(event) => setBurger({ x: event.clientX, y: event.clientY })}
+          className="shrink-0 cursor-pointer"
+        >
+          <Menu className="size-[1em]" />
+        </button>
+      </div>
+      {burger !== null && (
+        <BurgerMenu position={burger} onClose={() => setBurger(null)} tabs={columnMenuTabs(view, column)} />
+      )}
+    </>
   )
 }
 
