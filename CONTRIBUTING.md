@@ -207,9 +207,8 @@ Some metrics in ESlint serve as rough approximations while others are just conve
 - We use [Vitest](https://vitest.dev).
 - Put a test next to the file it tests, named `*.test.ts` (or `*.test.tsx` for components):
   `server/src/utils/parseCsv.ts` has `server/src/utils/parseCsv.test.ts`
-- Tests are only picked up under `server/src/` and `client/app/`.
-- Import `describe`, `it` and `expect` from `'vitest'`.
-- Run a single workspace with `npx vitest --project server` (or `client`).
+- See [TESTING.md](TESTING.md) for where tests live, the test types (unit, integration,
+  end-to-end), copy-paste templates and conventions.
 ---
 
 ## Merging

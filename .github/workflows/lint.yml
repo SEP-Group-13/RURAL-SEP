@@ -1,5 +1,5 @@
 # quality checks (4/11 checks required by the SEP quality requirements are done via CI
-name: Lint
+name: CI
 
 on:
   pull_request:
@@ -42,3 +42,20 @@ jobs:
           key: simian-${{ hashFiles('scripts/simian.sh') }}
 
       - run: bash scripts/simian.sh
+
+  tests:
+    name: 3. Tests
+    needs: simian
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test

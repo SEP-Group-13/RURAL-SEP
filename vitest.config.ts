@@ -28,7 +28,7 @@ export default defineConfig({
           name: 'client',
           root: './client',
           include: ['app/**/*.test.{ts,tsx}'],
-          environment: 'node',
+          environment: 'jsdom',
         },
       },
     ],
