@@ -59,7 +59,7 @@ export default function ParticipantTable({ view }: { view: View }) {
   }
 
   return (
-    <div>
+    <div className="p-3">
       <div className="flex items-center gap-2 mb-3">
         <Button onClick={() => setShowColumnPicker(!showColumnPicker)}>
           {showColumnPicker ? 'Hide columns' : 'Columns'}
