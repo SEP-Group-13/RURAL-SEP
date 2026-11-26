@@ -7,3 +7,5 @@
 **/.react-router
 *.log
 .DS_Store
+**/*.test.ts
+**/*.test.tsx

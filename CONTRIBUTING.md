@@ -181,21 +181,34 @@ feat(client): add participant table with pagination
 
 ## Linting, formatting and tests
 
+All commands run from the repo root.
+
+| Command              | What it does                                                                      |
+| -------------------- | --------------------------------------------------------------------------------- |
+| `npm run lint`       | Run ESLint, including module size (SLOC <= 400) and max complexity (<= 20)        |
+| `npm run lint:fix`   | Run ESLint and auto-fix what it can                                               |
+| `npm run simian`     | Check internal/external code duplication with the assessment's Simian settings   |
+| `npm run quality`    | Lint + Simian                                                                     |
+| `npm test`           | Run all tests once (this is what CI runs)                                         |
+| `npm run test:watch` | Re-run tests on file changes while developing                                     |
+| `npm run check`      | Lint + tests, run this before pushing                                             |
+
+### Code quality
+
 Code quality is graded by the SEP Code Quality Assessment (SciTools Understand + Simian).
-These commands check part of it locally; run them from the repo root.
-
-| Command | What it checks |
-| --- | --- |
-| `npm run lint` | ESLint, including module size (SLOC <= 400) and max complexity (<= 20) |
-| `npm run simian` | Internal/external code duplication with the assessment's Simian settings |
-| `npm run quality` | Both of the above |
-
-CI runs `lint` and `simian` on every PR. The files left out of the analysis are listed in the
-[README](README.md#excluded-from-code-quality-analysis). The pass given by the CI is not equivalent to passing all quality metrics imposed by the course!
+`lint` and `simian` check part of it, and CI runs both on every PR. The files left out of the
+analysis are listed in the [README](README.md#excluded-from-code-quality-analysis). The pass given by the CI is not equivalent to passing all quality metrics imposed by the course!
 Some metrics in ESlint serve as rough approximations while others are just conventions to keep the code clean.
 
-> TODO: formatting and test setup will be documented here.
+> TODO: formatting setup will be documented here.
 
+### Writing tests
+
+- We use [Vitest](https://vitest.dev).
+- Put a test next to the file it tests, named `*.test.ts` (or `*.test.tsx` for components):
+  `server/src/utils/parseCsv.ts` has `server/src/utils/parseCsv.test.ts`
+- See [TESTING.md](TESTING.md) for where tests live, the test types (unit, integration,
+  end-to-end), copy-paste templates and conventions.
 ---
 
 ## Merging
