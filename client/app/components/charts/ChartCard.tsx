@@ -1,12 +1,11 @@
 import type { ChangeEvent, ReactElement } from 'react'
 import { X } from 'lucide-react'
-import BarChart from '~/components/charts/BarChart'
-import type { ChartType } from '~/components/charts/chartUtils'
+import BarLineChart from '~/components/charts/BarLineChart'
+import type { ChartData, ChartType } from '~/components/charts/chartUtils'
 import { COUNT_COLUMN_KEY, countsToChartData, resolveXColumn } from '~/components/charts/chartUtils'
-import LineChart from '~/components/charts/LineChart'
 import PieChart from '~/components/charts/PieChart'
 import { chartHandler, getLatestData, useChartCounts, useViewHandlerState, useViewSettings, viewHandler } from '~/data'
-import type { View } from '~/data'
+import type { Column, View } from '~/data'
 
 // i think this would be the proper interface for a 2D plane chart, different one might need to be used later on
 export interface ChartConfig {
@@ -22,8 +21,6 @@ const CHART_TYPES: { value: string; label: string }[] = [
   { value: 'line', label: 'Line' },
   { value: 'pie', label: 'Pie' },
 ]
-
-const CHART_COMPONENTS = { bar: BarChart, line: LineChart, pie: PieChart }
 
 // a dropdown of items, you select a value, the dropdown has a label and a name (look downwards when using)
 function Select({ name, label, value, items, onChange }: {
@@ -124,16 +121,6 @@ export default function ChartCard({ chart, onChange, onRemove }: {
   // TODO(spec): averages of a number column per X value need an API endpoint; until then only counts.
   const yItems: { value: string; label: string }[] = [{ value: COUNT_COLUMN_KEY, label: 'Count of rows' }]
 
-  let title = 'Chart'
-  if (xValue !== null && chartData.datasets.length > 0) {
-    title = `${chartData.datasets[0].label} by ${xValue.label} — ${view.getName()}`
-  }
-
-  function renderChart(): ReactElement {
-    const ChartComponent = CHART_COMPONENTS[chart.type]
-    return <ChartComponent labels={chartData.labels} datasets={chartData.datasets} title={title} />
-  }
-  
   // actual rendering of the chart card (section, dropdowns, status messages, chart)
   return (
     <section className="grid content-start gap-2 bg-dashboard-surface p-3">
@@ -150,7 +137,24 @@ export default function ChartCard({ chart, onChange, onRemove }: {
       </div>
       {xValue === null && <p className="text-sm opacity-70">This view has no category column to chart.</p>}
       {xValue !== null && state.status === 'error' && <p className="text-sm text-red-500">Could not load the chart: {state.error}</p>}
-      {counts !== null && chartData.labels.length > 0 && renderChart()}
+      {counts !== null && chartData.labels.length > 0 && (
+        <ChartView type={chart.type} data={chartData} title={chartTitle(chartData, xValue, view)} />
+      )}
     </section>
   )
+}
+
+// the selected chart type, drawn with the card's data
+function ChartView({ type, data, title }: { type: ChartType; data: ChartData; title: string }) {
+  if (type === 'pie') {
+    return <PieChart labels={data.labels} datasets={data.datasets} title={title} />
+  }
+  return <BarLineChart type={type} labels={data.labels} datasets={data.datasets} title={title} />
+}
+
+function chartTitle(data: ChartData, xValue: Column | null, view: View): string {
+  if (xValue === null || data.datasets.length === 0) {
+    return 'Chart'
+  }
+  return `${data.datasets[0].label} by ${xValue.label} — ${view.getName()}`
 }
