@@ -1,41 +1,108 @@
 \set ON_ERROR_STOP on
--- Loads every CSV from /data into the tables. Run schema.sql first.
+-- Load the fixture CSVs atomically after running schema.sql.
 -- Parents are loaded before children so the foreign keys are satisfied.
-\copy participant FROM '/data/dummy_participant_master_file.csv' CSV HEADER
-\copy inperson_burden_events FROM '/data/inperson_burden_events.csv' CSV HEADER
-\copy bmx_j FROM '/data/BMX_J.csv' CSV HEADER
-\copy bpx_j FROM '/data/BPX_J.csv' CSV HEADER
-\copy lux_j FROM '/data/LUX_J.csv' CSV HEADER
-\copy dxx_j FROM '/data/DXX_J_radiation.csv' CSV HEADER
-CREATE TEMP TABLE onsite_raw (participant_identifier TEXT, start_tm TEXT, first_submit_tm TEXT, complete_tm TEXT, elapsed_tm TEXT, survey_id TEXT, survey TEXT, woman TEXT, age TEXT, white TEXT, county TEXT, phone TEXT);
-\copy onsite_raw FROM '/data/test_data_surveys.csv' CSV HEADER
-INSERT INTO test_data_surveys
-SELECT participant_identifier,
-       to_timestamp(start_tm, 'DDMONYY:HH24:MI:SS')::timestamp,
-       to_timestamp(first_submit_tm, 'DDMONYY:HH24:MI:SS')::timestamp,
-       to_timestamp(complete_tm, 'DDMONYY:HH24:MI:SS')::timestamp,
-       elapsed_tm::integer, survey_id::integer, survey,
-       woman::boolean, age::numeric, white::boolean, county::smallint, phone
-FROM onsite_raw;
-\copy survey_results FROM '/data/SurveyResults.csv' CSV HEADER
-\copy survey_step_results FROM '/data/SurveyStepResults.csv' CSV HEADER
-\copy survey_step_viewed FROM '/data/SurveyStepViewed.csv' CSV HEADER
-\copy notification_sent FROM '/data/NotificationSent.csv' CSV HEADER
-\copy email_send FROM '/data/EmailSend.csv' CSV HEADER
-\copy email_delivery FROM '/data/EmailDelivery.csv' CSV HEADER
-\copy email_open FROM '/data/EmailOpen.csv' CSV HEADER
-\copy email_click FROM '/data/EmailClick.csv' CSV HEADER
-\copy email_bounce FROM '/data/EmailBounce.csv' CSV HEADER
-\copy email_complaint FROM '/data/EmailComplaint.csv' CSV HEADER
-\copy sms_send FROM '/data/SmsSend.csv' CSV HEADER
-\copy sms_delivery FROM '/data/SmsDelivery.csv' CSV HEADER
-\copy sms_failure FROM '/data/SmsFailure.csv' CSV HEADER
-\copy sms_link_clicked FROM '/data/SmsLinkClicked.csv' CSV HEADER
-\copy sms_opt_out FROM '/data/SmsOptOut.csv' CSV HEADER
-\copy push_notification_sent FROM '/data/PushNotificationSent.csv' CSV HEADER
-\copy push_notification_opened FROM '/data/PushNotificationOpened.csv' CSV HEADER
+BEGIN;
+SET LOCAL search_path = public;
 
--- Row counts, compare with the schema note
+\set target_table participant
+\set csv_file /data/dummy_participant_master_file.csv
+\set verify_participant_identities
+\ir import.sql
+\unset verify_participant_identities
+
+\set target_table inperson_burden_events
+\set csv_file /data/inperson_burden_events.csv
+\ir import.sql
+
+\set target_table bmx_j
+\set csv_file /data/BMX_J.csv
+\ir import.sql
+
+\set target_table bpx_j
+\set csv_file /data/BPX_J.csv
+\ir import.sql
+
+\set target_table lux_j
+\set csv_file /data/LUX_J.csv
+\ir import.sql
+
+\set target_table dxx_j
+\set csv_file /data/DXX_J_radiation.csv
+\ir import.sql
+
+\set target_table test_data_surveys
+\set csv_file /data/test_data_surveys.csv
+\ir import.sql
+
+\set target_table survey_results
+\set csv_file /data/SurveyResults.csv
+\ir import.sql
+
+\set target_table survey_step_results
+\set csv_file /data/SurveyStepResults.csv
+\ir import.sql
+
+\set target_table survey_step_viewed
+\set csv_file /data/SurveyStepViewed.csv
+\ir import.sql
+
+\set target_table notification_sent
+\set csv_file /data/NotificationSent.csv
+\ir import.sql
+
+\set target_table email_send
+\set csv_file /data/EmailSend.csv
+\ir import.sql
+
+\set target_table email_delivery
+\set csv_file /data/EmailDelivery.csv
+\ir import.sql
+
+\set target_table email_open
+\set csv_file /data/EmailOpen.csv
+\ir import.sql
+
+\set target_table email_click
+\set csv_file /data/EmailClick.csv
+\ir import.sql
+
+\set target_table email_bounce
+\set csv_file /data/EmailBounce.csv
+\ir import.sql
+
+\set target_table email_complaint
+\set csv_file /data/EmailComplaint.csv
+\ir import.sql
+
+\set target_table sms_send
+\set csv_file /data/SmsSend.csv
+\ir import.sql
+
+\set target_table sms_delivery
+\set csv_file /data/SmsDelivery.csv
+\ir import.sql
+
+\set target_table sms_failure
+\set csv_file /data/SmsFailure.csv
+\ir import.sql
+
+\set target_table sms_link_clicked
+\set csv_file /data/SmsLinkClicked.csv
+\ir import.sql
+
+\set target_table sms_opt_out
+\set csv_file /data/SmsOptOut.csv
+\ir import.sql
+
+\set target_table push_notification_sent
+\set csv_file /data/PushNotificationSent.csv
+\ir import.sql
+
+\set target_table push_notification_opened
+\set csv_file /data/PushNotificationOpened.csv
+\ir import.sql
+
+-- Report the total rows now present in each table.
 SELECT 'participant' AS table_name, count(*) FROM participant
 UNION ALL SELECT 'inperson_burden_events', count(*) FROM inperson_burden_events
 UNION ALL SELECT 'bmx_j', count(*) FROM bmx_j
@@ -60,3 +127,5 @@ UNION ALL SELECT 'sms_link_clicked', count(*) FROM sms_link_clicked
 UNION ALL SELECT 'sms_opt_out', count(*) FROM sms_opt_out
 UNION ALL SELECT 'push_notification_sent', count(*) FROM push_notification_sent
 UNION ALL SELECT 'push_notification_opened', count(*) FROM push_notification_opened;
+
+COMMIT;
