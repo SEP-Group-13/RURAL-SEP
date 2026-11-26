@@ -27,12 +27,17 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
 
-  // complexity limits, warn will not fail, error will.
+  // warn will not fail, error will.
   {
     files: ['**/*.{ts,tsx}'],
     rules: {
-      // Cyclomatic complexity:
-      complexity: ['warn', 10],
+      
+      // SEP metric: module size, SLOC <= 400
+      'max-lines': ['error', { max: 400, skipBlankLines: true, skipComments: true }],
+      // SEP metric: max cyclomatic complexity per method <= 20
+      complexity: ['error', 20],
+
+      // Not graded but sensible.
       'max-depth': ['warn', 4],
       'max-params': ['warn', 4],
       'max-lines-per-function': ['warn', { max: 80, skipBlankLines: true, skipComments: true }],
@@ -55,11 +60,11 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
 
-  // ignore function line size for tests
   {
     files: ['**/*.test.{ts,tsx}'],
     rules: {
       'max-lines-per-function': 'off',
+      'max-lines': 'off',
     },
   },
 )

@@ -181,7 +181,24 @@ feat(client): add participant table with pagination
 
 ## Linting, formatting and tests
 
+<<<<<<< HEAD
 All commands run from the repo root.
+=======
+Code quality is graded by the SEP Code Quality Assessment (SciTools Understand + Simian).
+These commands check part of it locally; run them from the repo root.
+
+| Command | What it checks |
+| --- | --- |
+| `npm run lint` | ESLint, including module size (SLOC <= 400) and max complexity (<= 20) |
+| `npm run simian` | Internal/external code duplication with the assessment's Simian settings |
+| `npm run quality` | Both of the above |
+
+CI runs `lint` and `simian` on every PR. The files left out of the analysis are listed in the
+[README](README.md#excluded-from-code-quality-analysis). The pass given by the CI is not equivalent to passing all quality metrics imposed by the course!
+Some metrics in ESlint serve as rough approximations while others are just conventions to keep the code clean.
+
+> TODO: formatting and test setup will be documented here.
+>>>>>>> main
 
 | Command              | What it does                                   |
 | -------------------- | ---------------------------------------------- |
