@@ -22,7 +22,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "simian": "bash scripts/simian.sh",
-    "quality": "run-s --continue-on-error lint simian"
+    "quality": "run-s --continue-on-error lint simian",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run lint && npm run test"
   },
   "repository": {
     "type": "git",
