@@ -42,7 +42,7 @@
   --route-button-hover-text: var(--text-main);
 
   /* Dashboard (bg of topbar and outlet)*/
-  --dashboard-surface: #202020;
+  --dashboard-surface: #1a1a1a;
 
 }
 
@@ -79,3 +79,4 @@ body {
   background-color: var(--bg);
   color: var(--text-main);
 }
+

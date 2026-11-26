@@ -1,12 +1,12 @@
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router'
 import Button from '~/components/Button/Button'
 import { bandCellKey, getLatestData, useViewPage, useViewSettings } from '~/data'
 import type { Column, SortRule, View, ViewRow, ViewSettings } from '~/data'
 import ColumnPicker from './ColumnPicker'
 import { getColumnWidth } from './columnWidths'
 import { formatCell } from './formatCell'
-import { Link } from 'react-router'
 
 /** One column on screen. A band column is shown as one column per year (the server bands per year). */
 interface DisplayColumn {
@@ -156,7 +156,13 @@ function ParticipantRow({
     <div className="grid gap-2 px-3 py-2 border-b border-sidebar-surface" style={{ gridTemplateColumns }}>
       {columns.map((display) => (
         <span key={display.key} className="truncate">
-          {formatCell(row.cells[display.cellKey])}
+          {display.key === 'participantId' ? (
+            <Link to={`/participants/${encodeURIComponent(row.participantId)}`} className='hover:text-blue-500'>
+            {formatCell(row.cells[display.cellKey])}
+          </Link>
+          ) : (
+            formatCell(row.cells[display.cellKey])
+          )}
         </span>
       ))}
     </div>

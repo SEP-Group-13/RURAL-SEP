@@ -1,4 +1,4 @@
-import type { Route } from './+types/home'
+import type { Route } from './+types/participants'
 import ParticipantTable from '~/components/ParticipantTable/ParticipantTable'
 import ViewWrapper from '~/components/Views/ViewWrapper'
 import { useViewHandlerState, viewHandler } from '~/data'
