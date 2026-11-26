@@ -39,18 +39,10 @@ function checkColumnReferences(expression: string, columns: Column[]): string | 
   return null
 }
 
-export default function AddBurdenFormulaMenu({ view, onClose }: { view: View; onClose: () => void }) {
-  const settings = useViewSettings(view)
-  const [name, setName] = useState('')
-  const [expression, setExpression] = useState('')
-  const [predefined, setPredefined] = useState<PredefinedFormulaName | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
+function useCursorInsertion(expression: string, setExpression: (value: string) => void) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const hasCursor = useRef(false)
   const nextCursor = useRef<number | null>(null)
-
-  const numberColumns = settings.columns.filter((column) => column.dataType === 'number')
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current
@@ -61,26 +53,47 @@ export default function AddBurdenFormulaMenu({ view, onClose }: { view: View; on
     }
   }, [expression])
 
-  const insertColumn = (columnKey: string) => {
-    const reference = `[${columnKey}]`
+  const insertAtCursor = (text: string) => {
     const textarea = textareaRef.current
     const start = hasCursor.current && textarea !== null ? textarea.selectionStart : expression.length
     const end = hasCursor.current && textarea !== null ? textarea.selectionEnd : expression.length
-    nextCursor.current = start + reference.length
-    setExpression(expression.slice(0, start) + reference + expression.slice(end))
+    nextCursor.current = start + text.length
+    setExpression(expression.slice(0, start) + text + expression.slice(end))
+  }
+
+  const trackCursor = () => {
+    hasCursor.current = true
+  }
+  const resetCursor = () => {
+    hasCursor.current = false
+  }
+
+  return { textareaRef, insertAtCursor, trackCursor, resetCursor }
+}
+
+export default function AddBurdenFormulaMenu({ view, onClose }: { view: View; onClose: () => void }) {
+  const settings = useViewSettings(view)
+  const [name, setName] = useState('')
+  const [expression, setExpression] = useState('')
+  const [predefined, setPredefined] = useState<PredefinedFormulaName | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { textareaRef, insertAtCursor, trackCursor, resetCursor } = useCursorInsertion(expression, setExpression)
+
+  const numberColumns = settings.columns.filter((column) => column.dataType === 'number')
+
+  const insertColumn = (columnKey: string) => {
+    insertAtCursor(`[${columnKey}]`)
     setError(null)
   }
 
-  const choosePredefined = (value: string) => {
-    if (value === '') {
-      setPredefined(null)
+  const choosePredefined = (formulaName: PredefinedFormulaName | null) => {
+    setPredefined(formulaName)
+    if (formulaName === null) {
       return
     }
-    const formulaName = value as PredefinedFormulaName
-    setPredefined(formulaName)
     setName(PREDEFINED_FORMULAS[formulaName].label)
     setExpression(PREDEFINED_FORMULAS[formulaName].expression)
-    hasCursor.current = false
+    resetCursor()
     setError(null)
   }
 
@@ -100,21 +113,7 @@ export default function AddBurdenFormulaMenu({ view, onClose }: { view: View; on
 
   return (
     <div>
-      <label className="block mb-2 text-sm">
-        Predefined formula
-        <select
-          className="block w-full px-2 py-1 mt-1 rounded bg-dashboard-surface"
-          value={predefined ?? ''}
-          onChange={(event) => choosePredefined(event.target.value)}
-        >
-          <option value="">Custom formula</option>
-          {PREDEFINED_NAMES.map((formulaName) => (
-            <option key={formulaName} value={formulaName}>
-              {PREDEFINED_FORMULAS[formulaName].label}
-            </option>
-          ))}
-        </select>
-      </label>
+      <PredefinedFormulaSelect value={predefined} onChange={choosePredefined} />
 
       <label className="block mb-2 text-sm">
         Name
@@ -137,9 +136,7 @@ export default function AddBurdenFormulaMenu({ view, onClose }: { view: View; on
           className="block w-full px-2 py-1 mt-1 font-mono rounded resize-y bg-dashboard-surface"
           placeholder="[timeBurden] * 2 + [emailsSent]"
           value={expression}
-          onFocus={() => {
-            hasCursor.current = true
-          }}
+          onFocus={trackCursor}
           onBlur={() => setError(checkColumnReferences(expression, settings.columns))}
           onChange={(event) => {
             setExpression(event.target.value)
@@ -148,26 +145,62 @@ export default function AddBurdenFormulaMenu({ view, onClose }: { view: View; on
         />
       </label>
 
-      <p className="text-sm">Columns</p>
-      <div className="max-h-40 overflow-y-auto mb-1">
-        {numberColumns.map((column) => (
-          <button
-            key={column.key}
-            type="button"
-            title={`Insert [${column.key}]`}
-            className="block w-full px-2 py-0.5 text-sm text-left truncate rounded cursor-pointer hover:bg-dashboard-surface"
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => insertColumn(column.key)}
-          >
-            {column.label}
-          </button>
-        ))}
-      </div>
+      <ColumnPicker columns={numberColumns} onPick={insertColumn} />
 
       {error !== null && <p className="text-sm text-red-400 mt-1">{error}</p>}
       <Button className="w-full mt-2" onClick={add}>
         Add formula
       </Button>
     </div>
+  )
+}
+
+function PredefinedFormulaSelect({
+  value,
+  onChange,
+}: {
+  value: PredefinedFormulaName | null
+  onChange: (formulaName: PredefinedFormulaName | null) => void
+}) {
+  return (
+    <label className="block mb-2 text-sm">
+      Predefined formula
+      <select
+        className="block w-full px-2 py-1 mt-1 rounded bg-dashboard-surface"
+        value={value ?? ''}
+        onChange={(event) =>
+          onChange(event.target.value === '' ? null : (event.target.value as PredefinedFormulaName))
+        }
+      >
+        <option value="">Custom formula</option>
+        {PREDEFINED_NAMES.map((formulaName) => (
+          <option key={formulaName} value={formulaName}>
+            {PREDEFINED_FORMULAS[formulaName].label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
+function ColumnPicker({ columns, onPick }: { columns: Column[]; onPick: (columnKey: string) => void }) {
+  return (
+    <>
+      <p className="text-sm">Columns</p>
+      <div className="max-h-40 overflow-y-auto mb-1">
+        {columns.map((column) => (
+          <button
+            key={column.key}
+            type="button"
+            title={`Insert [${column.key}]`}
+            className="block w-full px-2 py-0.5 text-sm text-left truncate rounded cursor-pointer hover:bg-dashboard-surface"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => onPick(column.key)}
+          >
+            {column.label}
+          </button>
+        ))}
+      </div>
+    </>
   )
 }

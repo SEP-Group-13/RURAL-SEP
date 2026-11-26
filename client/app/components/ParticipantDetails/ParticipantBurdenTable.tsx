@@ -27,11 +27,48 @@ export default function ParticipantBurdenTable({
     timeByExamElement,
     yearlyTotals,
 }: ParticipantBurdenTableProps) {
-    const sortedYearlyTotals = [...yearlyTotals].sort((a, b) => a.year - b.year)
+    const years = collectYears(activities, timeByExamElement, yearlyTotals)
+    const columns = buildColumns(years)
+    const gridTemplateColumns = columns.map((column) => column.width).join(" ")
+    const burdenRows = [
+        ...buildSummaryRows(years, yearlyTotals),
+        ...buildActivityRows(years, activities, timeByExamElement),
+    ]
 
+    return (
+        <section className="p-0 mt-4 rounded">
+            <h1 className="text-xl font-semibold mb-3">Burden</h1>
+            <div className="h-80 overflow-x-auto overflow-y-auto">
+                <div className="min-w-fit text-sm">
+                    <div className="sticky top-0 z-10 grid gap-1 px-2 py-1.5 font-semibold bg-sidebar-surface rounded-t" style={{ gridTemplateColumns }}>
+                        {columns.map((column) => (
+                            <BurdenHeaderCell key={column.key} column={column} />
+                        ))}
+                    </div>
+                    {(years.length === 0 || burdenRows.length === 0) && (
+                        <p className="px-2 py-1.5">No burden data available for this participant.</p>
+                    )}
+                    {years.length > 0 && burdenRows.map((row) => (
+                        <BurdenTableRow
+                            key={row.key}
+                            row={row}
+                            years={years}
+                            gridTemplateColumns={gridTemplateColumns}
+                        />
+                    ))}
+                </div>
+            </div>
+        </section>
+    )
+}
+
+function collectYears(
+    activities: Activity[],
+    timeByExamElement: ExamElementTime[],
+    yearlyTotals: YearlyTotals[],
+): number[] {
     const yearsSet = new Set<number>()
-
-    for (const yearlyTotal of sortedYearlyTotals) {
+    for (const yearlyTotal of yearlyTotals) {
         yearsSet.add(yearlyTotal.year)
     }
     for (const entry of timeByExamElement) {
@@ -40,62 +77,37 @@ export default function ParticipantBurdenTable({
     for (const activity of activities) {
         yearsSet.add(Number(activity.startTime.slice(0, 4)))
     }
-    
-    const years = Array.from(yearsSet).sort((firstYear, secondYear) => firstYear - secondYear)
+    return Array.from(yearsSet).sort((firstYear, secondYear) => firstYear - secondYear)
+}
 
-    const columns: BurdenColumn[] = [
+function buildColumns(years: number[]): BurdenColumn[] {
+    return [
         { key: "activity", label: "Burden", width: "minmax(8rem,1.2fr)" },
         { key: "burden", label: "Type", width: "minmax(7rem,1fr)" },
         ...years.map((year) => ({key: `year-${year}`, label: String(year), width: "minmax(5rem,0.8fr)",})),
         { key: "total", label: "Total", width: "minmax(5rem,0.8fr)" },
     ]
-    const gridTemplateColumns = columns.map((column) => column.width).join(" ")
+}
 
+function buildSummaryRows(years: number[], yearlyTotals: YearlyTotals[]): BurdenRow[] {
     const yearlyTotalByYear = new Map(
-        sortedYearlyTotals.map((yearlyTotal) => [yearlyTotal.year, yearlyTotal]),
+        yearlyTotals.map((yearlyTotal) => [yearlyTotal.year, yearlyTotal]),
     )
     const radiationByYear = years.map((year) => yearlyTotalByYear.get(year)?.radiationMsv ?? 0)
-
     const contactFrequencyByYear = years.map((year) => {
         const yearlyTotal = yearlyTotalByYear.get(year)
         return (yearlyTotal?.emailsSent ?? 0) + (yearlyTotal?.smsSent ?? 0)
     })
     const timeByYear = years.map((year) => yearlyTotalByYear.get(year)?.timeMinutes ?? 0)
 
-    const examElementsSet = new Set<string>()
-    for (const entry of timeByExamElement) {
-        examElementsSet.add(entry.examElement)
-    }
-    for (const activity of activities) {
-        examElementsSet.add(activity.examElement)
-    }
-    const examElements = Array.from(examElementsSet).sort((first, second) =>
-        first.localeCompare(second),
-    )
-
-    const activityRows: BurdenRow[] = examElements.map((examElement) => {
-        const timeForYear = (year: number) =>
-            sum(timeByExamElement.filter((entry) => entry.year === year && entry.examElement === examElement).map((entry) => entry.minutes),
-            )
-
-        return {
-            key: examElement,
-            category: examElement,
-            measure: "Time (min)",
-            values: years.map(timeForYear),
-            total: sum(timeByExamElement.filter((entry) => entry.examElement === examElement).map((entry) => entry.minutes),
-            ),
-        }
-    })
-
-    const burdenRows: BurdenRow[] = [
+    return [
         {
             key: "participation-burden",
             category: "Participation Burden",
             measure: "Core exam + Additional",
             values: [],
             total: sum(
-                sortedYearlyTotals.map(
+                yearlyTotals.map(
                     (yearlyTotal) => yearlyTotal.coreExamCompleted + yearlyTotal.additionalStudies,
                 ),
             ),
@@ -126,35 +138,38 @@ export default function ParticipantBurdenTable({
             total: sum(timeByYear),
             bold: true,
         },
-
-        ...activityRows,
     ]
-    
-    return (
-        <section className="p-0 mt-4 rounded">
-            <h1 className="text-xl font-semibold mb-3">Burden</h1>
-            <div className="h-80 overflow-x-auto overflow-y-auto">
-                <div className="min-w-fit text-sm">
-                    <div className="sticky top-0 z-10 grid gap-1 px-2 py-1.5 font-semibold bg-sidebar-surface rounded-t" style={{ gridTemplateColumns }}>
-                        {columns.map((column) => (
-                            <BurdenHeaderCell key={column.key} column={column} />
-                        ))}
-                    </div>
-                    {(years.length === 0 || burdenRows.length === 0) && (
-                        <p className="px-2 py-1.5">No burden data available for this participant.</p>
-                    )}
-                    {years.length > 0 && burdenRows.map((row) => (
-                        <BurdenTableRow
-                            key={row.key}
-                            row={row}
-                            years={years}
-                            gridTemplateColumns={gridTemplateColumns}
-                        />
-                    ))}
-                </div>
-            </div>
-        </section>
+}
+
+function buildActivityRows(
+    years: number[],
+    activities: Activity[],
+    timeByExamElement: ExamElementTime[],
+): BurdenRow[] {
+    const examElementsSet = new Set<string>()
+    for (const entry of timeByExamElement) {
+        examElementsSet.add(entry.examElement)
+    }
+    for (const activity of activities) {
+        examElementsSet.add(activity.examElement)
+    }
+    const examElements = Array.from(examElementsSet).sort((first, second) =>
+        first.localeCompare(second),
     )
+
+    return examElements.map((examElement) => {
+        const entries = timeByExamElement.filter((entry) => entry.examElement === examElement)
+        const timeForYear = (year: number) =>
+            sum(entries.filter((entry) => entry.year === year).map((entry) => entry.minutes))
+
+        return {
+            key: examElement,
+            category: examElement,
+            measure: "Time (min)",
+            values: years.map(timeForYear),
+            total: sum(entries.map((entry) => entry.minutes)),
+        }
+    })
 }
 
 function BurdenHeaderCell({ column }: { column: BurdenColumn }) {
