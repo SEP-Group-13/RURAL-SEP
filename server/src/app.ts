@@ -10,30 +10,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const clientDir = path.resolve(__dirname, '../../dist/client/client')
 
-// // Debugging: Logs all incoming requests
-// app.use((req, res, next) => {
-//   console.log(`Incoming request: ${req.method} ${req.url}`)
-//   next()
-// })
-
-// Cors not needed as long as frontend and backend are on the same origin
-// app.use(cors({
-//   origin: env.URL,
-//   credentials: true // allows cookies
-// }))
-
 
 // Midlewares
 app.use(express.static(clientDir))  // Built React SPA (npm run build:client)
 app.use(express.static(path.resolve(__dirname, "../../public")))    // Will eventually be replaced by nginx or equivalent
 app.use(express.json()) // Allows parsing of application/json
-
-// Stops browsers, proxies, from caching API responses
-app.use('/api', (req, rest, next) => {
-  rest.set('Cache-control', 'no-store')
-  next()
-})
-
 
 
 // Routes

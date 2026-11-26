@@ -16,16 +16,6 @@
  */
 import * as zod from 'zod';
 
-export const burdenSummaryEmailsSentMin = 0;
-
-export const burdenSummarySmsSentMin = 0;
-
-export const burdenSummaryCoreExamCompletedMin = 0;
-
-export const burdenSummaryAdditionalStudiesMin = 0;
-
-
-
 export const BurdenSummary = zod.object({
   "timeMinutes": zod.number(),
   "timeByExamElement": zod.array(zod.object({
@@ -33,12 +23,8 @@ export const BurdenSummary = zod.object({
   "timeMinutes": zod.number()
 })),
   "radiationMsv": zod.number(),
-  "contactFrequency": zod.int().describe('`emailsSent` + `smsSent`.'),
-  "participation": zod.int().describe('`coreExamCompleted` + `additionalStudies`.'),
-  "emailsSent": zod.int().min(burdenSummaryEmailsSentMin),
-  "smsSent": zod.int().min(burdenSummarySmsSentMin),
-  "coreExamCompleted": zod.int().min(burdenSummaryCoreExamCompletedMin),
-  "additionalStudies": zod.int().min(burdenSummaryAdditionalStudiesMin)
+  "contactFrequency": zod.int(),
+  "participation": zod.int()
 });
 
 export type BurdenSummary = zod.input<typeof BurdenSummary>;

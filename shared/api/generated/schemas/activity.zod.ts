@@ -22,10 +22,10 @@ export const Activity = zod.object({
   "examType": zod.enum(['core', 'auxiliary']),
   "additionalStudy": zod.string().nullable().describe('Name of the additional study. `null` for a core exam.'),
   "type": zod.enum(['procedure', 'survey']),
-  "location": zod.string().nullable(),
+  "location": zod.union([zod.literal('completed'),zod.literal('notCompleted'),zod.literal(null)]).nullable(),
   "durationMinutes": zod.number().nullable(),
   "radiationMsv": zod.number().nullable(),
-  "status": zod.enum(['completed', 'notCompleted'])
+  "status": zod.string()
 }).describe('Duration and radiation are `null` when the activity was not completed.');
 
 export type Activity = zod.input<typeof Activity>;
