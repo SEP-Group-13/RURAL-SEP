@@ -5,3 +5,6 @@
 # React Router
 /.react-router/
 /build/
+
+# Shared development settings (no secrets): the API mock switch
+!.env.development

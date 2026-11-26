@@ -4,11 +4,8 @@ export abstract class DomainError extends Error {
     this.name = new.target.name;
   }
 }
+export class BadRequestError extends DomainError {}
+export class DataUnvailableError extends DomainError {}
+export class NotFoundError extends DomainError {}
 export class ValidationError extends DomainError {}
-export class EmailAlreadyInUseError extends DomainError {}
-export class UserNotFoundError extends DomainError {}
-export class InvalidCredentialsError extends DomainError {}
 export class DatabaseError extends DomainError {}
-export class UnauthorizedError extends DomainError {}
-export class InvalidUserError extends DomainError {}
-export class EventNotFoundError extends DomainError {}

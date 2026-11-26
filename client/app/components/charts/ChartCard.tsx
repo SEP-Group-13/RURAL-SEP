@@ -2,10 +2,10 @@ import type { ChangeEvent, ReactElement } from 'react'
 import { X } from 'lucide-react'
 import BarChart from '~/components/charts/BarChart'
 import type { ChartType } from '~/components/charts/chartUtils'
-import { COUNT_COLUMN_KEY, buildChartData, resolveXColumn, resolveYColumn } from '~/components/charts/chartUtils'
+import { COUNT_COLUMN_KEY, countsToChartData, resolveXColumn } from '~/components/charts/chartUtils'
 import LineChart from '~/components/charts/LineChart'
 import PieChart from '~/components/charts/PieChart'
-import { getLatestData, useViewHandlerState, useViewRows, useViewSettings, viewHandler } from '~/data'
+import { chartHandler, getLatestData, useChartCounts, useViewHandlerState, useViewSettings, viewHandler } from '~/data'
 import type { View } from '~/data'
 
 // i think this would be the proper interface for a 2D plane chart, different one might need to be used later on
@@ -69,20 +69,25 @@ export default function ChartCard({ chart, onChange, onRemove }: {
   }
 
   const columns = useViewSettings(view).columns
-  const { state } = useViewRows(view)
-  const rows = getLatestData(state)
-  const chartData = buildChartData(rows, columns, chart.xValue, chart.yValue)
+  // The server counts participants per value, which only works for category (and band) columns.
+  const categoryColumns: typeof columns = []
+  for (const column of columns) {
+    if (column.dataType === 'category') {
+      categoryColumns.push(column)
+    }
+  }
 
-  const xValue = resolveXColumn(columns, chart.xValue)
+  const xValue = resolveXColumn(categoryColumns, chart.xValue)
   let xSelectValue = chart.xValue
   if (xValue !== null) {
     xSelectValue = xValue.key
   }
-  const yValue = resolveYColumn(columns, chart.yValue)
-  let ySelectValue = COUNT_COLUMN_KEY
-  if (yValue !== null) {
-    ySelectValue = yValue.key
-  }
+  // The API only returns counts for now, so Y is always "Count of rows".
+  const ySelectValue = COUNT_COLUMN_KEY
+
+  const { state } = useChartCounts(chartHandler, [view], xValue?.key ?? '')
+  const counts = getLatestData(state)
+  const chartData = countsToChartData(counts)
 
   // the onChange handler for select
   function handleSelect(event: ChangeEvent<HTMLSelectElement>) {
@@ -113,16 +118,11 @@ export default function ChartCard({ chart, onChange, onRemove }: {
   }
   // an entry per column
   const xItems: { value: string; label: string }[] = []
-  for (const column of columns) {
+  for (const column of categoryColumns) {
     xItems.push({ value: column.key, label: column.label })
   }
-  // same as xItems, but only accepts columns with numbers and changes... well.. the y value of the chart
+  // TODO(spec): averages of a number column per X value need an API endpoint; until then only counts.
   const yItems: { value: string; label: string }[] = [{ value: COUNT_COLUMN_KEY, label: 'Count of rows' }]
-  for (const column of columns) {
-    if (column.dataType === 'number') {
-      yItems.push({ value: column.key, label: column.label })
-    }
-  }
 
   let title = 'Chart'
   if (xValue !== null && chartData.datasets.length > 0) {
@@ -148,8 +148,9 @@ export default function ChartCard({ chart, onChange, onRemove }: {
         <Select name="xValue" label="X value" value={xSelectValue} items={xItems} onChange={handleSelect} />
         <Select name="yValue" label="Y value" value={ySelectValue} items={yItems} onChange={handleSelect} />
       </div>
-      {state.status === 'error' && <p className="text-sm text-red-500">Could not load participants: {state.error}</p>}
-      {rows !== null && chartData.labels.length > 0 && renderChart()}
+      {xValue === null && <p className="text-sm opacity-70">This view has no category column to chart.</p>}
+      {xValue !== null && state.status === 'error' && <p className="text-sm text-red-500">Could not load the chart: {state.error}</p>}
+      {counts !== null && chartData.labels.length > 0 && renderChart()}
     </section>
   )
 }

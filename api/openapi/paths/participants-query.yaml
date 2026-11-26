@@ -1,0 +1,53 @@
+post:
+  operationId: postParticipantsQuery
+  tags:
+    - Participants
+  summary: Query the participant data table
+  x-urd:
+    - URF 1.8
+    - URF 2.1
+    - URF 2.2
+    - URF 2.4
+    - URF 2.5
+    - URF 2.9
+    - URF 2.11
+    - URF 3.11
+    - URF 3.12
+    - URF 3.13
+    - URF 3.14
+    - URF 3.15
+    - URF 3.18
+    - URF 3.19
+    - URF 7.1
+    - URF 7.2
+    - URF 7.3
+    - URF 7.4
+    - URF 7.5
+    - URF 8.1
+    - URF 8.2
+    - URF 8.3
+    - URF 8.4
+    - URF 8.5
+    - URF 8.6
+    - URF 8.8
+    - URF 8.9
+    - URF 8.10
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/participants/QueryParticipantsRequest.yaml
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/participants/ParticipantPage.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '422':
+      $ref: ../components/responses/UnprocessableContent.yaml
+    '503':
+      $ref: ../components/responses/DataUnavailable.yaml

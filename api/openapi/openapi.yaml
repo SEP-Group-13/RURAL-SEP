@@ -1,0 +1,48 @@
+openapi: 3.1.0
+
+info:
+  title: RURAL Dashboard API
+  version: 0.2.0
+  description: |
+    API for the RURAL Dashboard.
+
+    Note!: The server stores no views. A view (years, filters, formulas, simulations, bands and excluded
+    participants) lives in the browser and is sent in the request body of every operation to the server.
+    We do because of that have read-only operations that use `POST`, but they never change data and always
+    idempotent.
+
+    Conventions: We use JSON with `camelCase`, endpoints with 'kebab-case', timestamps in UTC,
+    all durations in minutes, `null` for missing values, and errors as `application/problem+json`.
+  contact:
+    name: Dashing Dashboard Developers
+
+servers:
+  - url: /api
+
+tags:
+  - name: Meta
+    description: Deployment, data-source, and participant-data configuration metadata.
+  - name: Participants
+  - name: Charts
+
+paths:
+  /meta/info:
+    $ref: paths/meta-info.yaml
+  /meta/columns:
+    $ref: paths/meta-columns.yaml
+  /meta/burden-presets:
+    $ref: paths/meta-burden-presets.yaml
+  /participants/query:
+    $ref: paths/participants-query.yaml
+  /participants/search:
+    $ref: paths/participants-search.yaml
+  /participants/{participantId}:
+    $ref: paths/participants-participantId.yaml
+  /participants/{participantId}/burden:
+    $ref: paths/participants-participantId-burden.yaml
+  /participants/{participantId}/activities:
+    $ref: paths/participants-participantId-activities.yaml
+  /charts/counts:
+    $ref: paths/charts-counts.yaml
+  /charts/histogram:
+    $ref: paths/charts-histogram.yaml

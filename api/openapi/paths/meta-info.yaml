@@ -1,0 +1,17 @@
+get:
+  operationId: getMetaInfo
+  tags:
+    - Meta
+  summary: Get deployment and data information
+  x-urd:
+    - URF 2.7
+    - URF 2.8
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/meta/Meta.yaml
+    '503':
+      $ref: ../components/responses/DataUnavailable.yaml

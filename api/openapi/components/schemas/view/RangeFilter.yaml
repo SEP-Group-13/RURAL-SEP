@@ -1,0 +1,16 @@
+title: RangeFilter
+type: object
+required:
+  - column
+anyOf:
+  - required:
+      - min
+  - required:
+      - max
+properties:
+  column:
+    $ref: ../common/ColumnName.yaml
+  min:
+    type: number
+  max:
+    type: number

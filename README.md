@@ -2,6 +2,8 @@
 
 Open source repository for the RURAL Study Candidate Dashboard.
 
+Before contributing, read [CONTRIBUTING.md](CONTRIBUTING.md) for the branch, commit and pull request conventions.
+
 ## Backend development
 
 Requires Docker with Compose v2.20+ running. From the repository root:

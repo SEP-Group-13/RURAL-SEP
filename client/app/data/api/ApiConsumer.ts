@@ -1,16 +1,63 @@
-import type { DatasetInfo } from '../types/dataset'
-import type { Participant, ParticipantDetails } from '../types/participant'
-import type { RowPage, ViewRow } from '../types/rows'
-import type { ViewQuery } from '../types/view'
+import type {
+  ApiActivity,
+  ApiColumn,
+  ApiMeta,
+  ApiParticipant,
+  BurdenPreset,
+  CountChartRequest,
+  CountChartResponse,
+  HistogramRequest,
+  HistogramResponse,
+  ParticipantBurden,
+  ParticipantPage,
+  ParticipantSearchResult,
+  QueryParticipantsRequest,
+} from './apiTypes'
 
+/** Options every request accepts. */
+export interface RequestOptions {
+  /**
+   * Aborts the request, e.g. when the view changed before the response arrived.
+   * The method then rejects with the abort error itself (check with `isAbortError`), not an ApiError.
+   */
+  signal?: AbortSignal
+}
+
+/**
+ * One method per operation in the OpenAPI spec, using the spec's own types.
+ *
+ * This layer only transports data: it does not translate to the UI's types (that is the job of
+ * the mappers). List wrappers such as `{ columns: [...] }` are unwrapped here.
+ * Every method rejects with an `ApiError` on failure, or with the abort error when aborted.
+ */
 export interface ApiConsumer {
-  getDatasetInfo(): Promise<DatasetInfo>
+  /** GET /meta */
+  getMeta(options?: RequestOptions): Promise<ApiMeta>
 
-  getParticipant(participantId: string): Promise<ParticipantDetails>
+  /** GET /columns, in default display order */
+  listColumns(options?: RequestOptions): Promise<ApiColumn[]>
 
-  getAllParticipants(): Promise<Participant[]>
+  /** GET /burden-presets */
+  getBurdenPresets(options?: RequestOptions): Promise<BurdenPreset[]>
 
-  getPageParticipants(pageSize: number, pageNumber: number, query: ViewQuery): Promise<RowPage>
+  /** POST /participants/query */
+  queryParticipants(body: QueryParticipantsRequest, options?: RequestOptions): Promise<ParticipantPage>
 
-  getAllParticipantRows(query: ViewQuery): Promise<ViewRow[]>
+  /** GET /participants/search */
+  searchParticipants(query: string, limit?: number, options?: RequestOptions): Promise<ParticipantSearchResult>
+
+  /** GET /participants/{participantId} */
+  getParticipant(participantId: string, options?: RequestOptions): Promise<ApiParticipant>
+
+  /** GET /participants/{participantId}/burden */
+  getParticipantBurden(participantId: string, options?: RequestOptions): Promise<ParticipantBurden>
+
+  /** GET /participants/{participantId}/activities, ascending by date */
+  listParticipantActivities(participantId: string, options?: RequestOptions): Promise<ApiActivity[]>
+
+  /** POST /charts/counts */
+  queryChartCounts(body: CountChartRequest, options?: RequestOptions): Promise<CountChartResponse>
+
+  /** POST /charts/histogram */
+  queryChartHistogram(body: HistogramRequest, options?: RequestOptions): Promise<HistogramResponse>
 }

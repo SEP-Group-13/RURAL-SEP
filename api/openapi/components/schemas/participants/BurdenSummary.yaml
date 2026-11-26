@@ -1,0 +1,47 @@
+title: BurdenSummary
+type: object
+required:
+  - timeMinutes
+  - timeByExamElement
+  - radiationMsv
+  - contactFrequency
+  - participation
+  - emailsSent
+  - smsSent
+  - coreExamCompleted
+  - additionalStudies
+properties:
+  timeMinutes:
+    type: number
+  timeByExamElement:
+    type: array
+    items:
+      type: object
+      required:
+        - examElement
+        - timeMinutes
+      properties:
+        examElement:
+          type: string
+        timeMinutes:
+          type: number
+  radiationMsv:
+    type: number
+  contactFrequency:
+    type: integer
+    description: '`emailsSent` + `smsSent`.'
+  participation:
+    type: integer
+    description: '`coreExamCompleted` + `additionalStudies`.'
+  emailsSent:
+    type: integer
+    minimum: 0
+  smsSent:
+    type: integer
+    minimum: 0
+  coreExamCompleted:
+    type: integer
+    minimum: 0
+  additionalStudies:
+    type: integer
+    minimum: 0

@@ -1,0 +1,18 @@
+{
+  "name": "api",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "redocly lint openapi/openapi.yaml",
+    "bundle": "redocly bundle openapi/openapi.yaml --output ../dist/openapi.yaml",
+    "docs": "redocly build-docs openapi/openapi.yaml --output ../dist/docs.html",
+    "zod": "orval --config ./orval.config.ts",
+    "generate": "npm run lint && npm run bundle && npm run docs && npm run zod"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^2.41.0",
+    "orval": "^8.47.0",
+    "typescript": "^5.9.0"
+  }
+}

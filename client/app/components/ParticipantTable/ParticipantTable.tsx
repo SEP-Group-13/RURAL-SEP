@@ -1,8 +1,9 @@
 import { ArrowDown, ArrowUp, Menu } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router'
 import Button from '~/components/Button/Button'
-import { getLatestData, useViewPage, useViewSettings } from '~/data'
-import type { Column, SortRule, View, ViewRow } from '~/data'
+import { bandCellKey, getLatestData, useViewPage, useViewSettings } from '~/data'
+import type { Column, SortRule, View, ViewRow, ViewSettings } from '~/data'
 import BurgerMenu from './BurgerMenu'
 import type { BurgerMenuTab, MenuPosition } from './BurgerMenu'
 import ColumnPicker from './ColumnPicker'
@@ -12,16 +13,46 @@ import AddBurdenFormulaMenu from './AddBurdenFormulaMenu'
 import { getColumnWidth } from './columnWidths'
 import { formatCell } from './formatCell'
 
+/** One column on screen. A band column is shown as one column per year (the server bands per year). */
+interface DisplayColumn {
+  key: string
+  column: Column
+  cellKey: string
+  title: string
+}
+
+function toDisplayColumns(columns: Column[], bandYears: Record<string, number[]> | undefined): DisplayColumn[] {
+  return columns.flatMap((column) => {
+    const years = column.source.kind === 'band' ? bandYears?.[column.key] : undefined
+    if (years === undefined || years.length === 0) {
+      return [{ key: column.key, column, cellKey: column.key, title: column.label }]
+    }
+    return years.map((year) => {
+      const cellKey = bandCellKey(column.key, year)
+      return { key: cellKey, column, cellKey, title: `${column.label} ${year}` }
+    })
+  })
+}
+
 export default function ParticipantTable({ view }: { view: View }) {
-  const [pageNumber, setPageNumber] = useState(1)
   const [showColumnPicker, setShowColumnPicker] = useState(false)
   const [tableMenu, setTableMenu] = useState<MenuPosition | null>(null)
   const settings = useViewSettings(view)
+
+  // Any change to the view starts again at page 1: a page number from before a filter change may be
+  // past the last page now. Kept with the settings it belongs to, so no request for the old page is sent.
+  const [paging, setPaging] = useState<{ settings: ViewSettings; pageNumber: number }>({ settings, pageNumber: 1 })
+  const pageNumber = paging.settings === settings ? paging.pageNumber : 1
+  const setPageNumber = (next: number) => setPaging({ settings, pageNumber: next })
+
   const { state, retry } = useViewPage(view, pageNumber)
 
-  const columns = settings.columns.filter((column) => column.visible)
-  const gridTemplateColumns = columns.map(getColumnWidth).join(' ')
   const page = getLatestData(state)
+  const columns = toDisplayColumns(
+    settings.columns.filter((column) => column.visible),
+    page?.bandYears,
+  )
+  const gridTemplateColumns = columns.map((c) => getColumnWidth(c.column)).join(' ')
   const loading = state.status === 'loading'
 
   if (state.status === 'error') {
@@ -34,7 +65,7 @@ export default function ParticipantTable({ view }: { view: View }) {
   }
 
   return (
-    <div>
+    <div className="p-3">
       <div className="flex items-center gap-2 mb-3">
         <Button onClick={() => setShowColumnPicker(!showColumnPicker)}>
           {showColumnPicker ? 'Hide columns' : 'Columns'}
@@ -59,8 +90,14 @@ export default function ParticipantTable({ view }: { view: View }) {
             className="grid gap-2 px-3 py-2 font-semibold bg-sidebar-surface rounded-t"
             style={{ gridTemplateColumns }}
           >
-            {columns.map((column) => (
-              <HeaderCell key={column.key} view={view} column={column} sort={settings.sort} />
+            {columns.map((display) => (
+              <HeaderCell
+                key={display.key}
+                view={view}
+                column={display.column}
+                title={display.title}
+                sort={settings.sort}
+              />
             ))}
           </div>
           {page === null && <p className="px-3 py-2">Loading…</p>}
@@ -118,7 +155,7 @@ function tableMenuTabs(view: View): BurgerMenuTab[] {
   ]
 }
 
-function HeaderCell({ view, column, sort }: { view: View; column: Column; sort: SortRule | null }) {
+function HeaderCell({ view, column, title, sort }: { view: View; column: Column; title: string; sort: SortRule | null }) {
   const [burger, setBurger] = useState<MenuPosition | null>(null)
   const direction = sort?.columnKey === column.key ? sort.direction : null
 
@@ -141,7 +178,7 @@ function HeaderCell({ view, column, sort }: { view: View; column: Column; sort: 
           title={`Sort by ${column.label}`}
           className="flex items-center gap-1 min-w-0 flex-1 text-left cursor-pointer"
         >
-          <span className="truncate">{column.label}</span>
+          <span className="truncate">{title}</span>
           {column.source.kind === 'formula' && <span className="italic font-normal">f</span>}
           {column.source.kind === 'simulation' && <span className="text-xs px-1 rounded bg-dashboard-surface">S</span>}
           {direction === 'asc' && <ArrowUp className="size-[1em] shrink-0" />}
@@ -169,14 +206,20 @@ function ParticipantRow({
   gridTemplateColumns,
 }: {
   row: ViewRow
-  columns: Column[]
+  columns: DisplayColumn[]
   gridTemplateColumns: string
 }) {
   return (
     <div className="grid gap-2 px-3 py-2 border-b border-sidebar-surface" style={{ gridTemplateColumns }}>
-      {columns.map((column) => (
-        <span key={column.key} className="truncate">
-          {formatCell(row.cells[column.key])}
+      {columns.map((display) => (
+        <span key={display.key} className="truncate">
+          {display.key === 'participantId' ? (
+            <Link to={`/participants/${encodeURIComponent(row.participantId)}`} className='hover:text-blue-500'>
+            {formatCell(row.cells[display.cellKey])}
+          </Link>
+          ) : (
+            formatCell(row.cells[display.cellKey])
+          )}
         </span>
       ))}
     </div>

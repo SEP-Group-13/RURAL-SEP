@@ -1,0 +1,21 @@
+get:
+  operationId: getMetaBurdenPresets
+  tags:
+    - Meta
+  summary: Get the preset burdens with their bands
+  x-urd:
+    - URF 2.12
+    - URF 2.15
+    - URF 7.6
+    - URF 8.1
+    - URF 8.2
+    - URF 8.3
+    - URF 8.4
+    - URF 8.7
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/burden/BurdenPresets.yaml

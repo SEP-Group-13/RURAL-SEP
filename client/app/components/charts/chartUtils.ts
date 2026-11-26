@@ -1,4 +1,4 @@
-import type { CellValue, Column, ViewRow } from '~/data'
+import type { CellValue, ChartCounts, Column, ViewRow } from '~/data'
 
 export type ChartType = 'bar' | 'line' | 'pie'
 
@@ -121,6 +121,31 @@ export function buildChartData(
   }
 
   return { labels, datasets: [{ label: seriesLabel, data }] }
+}
+
+// Builds the chart data from the server's counts: one dataset per series (a band column
+// has one series per selected year), with the buckets in the order the server sends them.
+export function countsToChartData(counts: ChartCounts | null): ChartData {
+  if (counts === null || counts.series.length === 0) {
+    return { labels: [], datasets: [] }
+  }
+  const labels: string[] = []
+  for (const bucket of counts.series[0].buckets) {
+    labels.push(bucket.label)
+  }
+  const datasets: SeriesData[] = []
+  for (const series of counts.series) {
+    let label = 'Participants'
+    if (series.year !== null) {
+      label = `Participants (${series.year})`
+    }
+    const data: (number | null)[] = []
+    for (const bucket of series.buckets) {
+      data.push(bucket.count)
+    }
+    datasets.push({ label, data })
+  }
+  return { labels, datasets }
 }
 
 function countGroup(group: ViewRow[]): number {

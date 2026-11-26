@@ -1,0 +1,25 @@
+title: BandSet
+type: object
+description: |
+  Adds the band column `<column> band` for a numeric column. Bands are assigned per calendar year from
+  that year's value, so there is one band column for each selected year.
+  Bands are in ascending order. Labels and bounds must be unique.
+required:
+  - column
+  - bands
+properties:
+  column:
+    $ref: ../common/ColumnName.yaml
+  bands:
+    type: array
+    minItems: 1
+    items:
+      $ref: Band.yaml
+examples:
+  - column: Radiation burden (mSv)
+    bands:
+      - label: Low
+        upperBound: 3
+      - label: Medium
+        upperBound: 10
+      - label: High

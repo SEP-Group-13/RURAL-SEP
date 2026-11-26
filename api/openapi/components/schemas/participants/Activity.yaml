@@ -1,0 +1,53 @@
+title: Activity
+type: object
+description: Duration and radiation are `null` when the activity was not completed.
+required:
+  - date
+  - examElement
+  - examType
+  - additionalStudy
+  - type
+  - location
+  - durationMinutes
+  - radiationMsv
+  - status
+properties:
+  date:
+    type: string
+    format: date-time
+  examElement:
+    type:
+      - string
+      - 'null'
+  examType:
+    type: string
+    enum:
+      - core
+      - auxiliary
+  additionalStudy:
+    type:
+      - string
+      - 'null'
+    description: Name of the additional study. `null` for a core exam.
+  type:
+    type: string
+    enum:
+      - procedure
+      - survey
+  location:
+    type:
+      - string
+      - 'null'
+  durationMinutes:
+    type:
+      - number
+      - 'null'
+  radiationMsv:
+    type:
+      - number
+      - 'null'
+  status:
+    type: string
+    enum:
+      - completed
+      - notCompleted
