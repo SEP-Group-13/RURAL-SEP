@@ -1,6 +1,6 @@
 import type { Route } from './+types/home'
 import ParticipantTable from '~/components/ParticipantTable/ParticipantTable'
-import ViewSelect from '~/components/ViewSelect/ViewSelect'
+import ViewWrapper from '~/components/Views/ViewWrapper'
 import { useViewHandlerState, viewHandler } from '~/data'
 
 export function meta({}: Route.MetaArgs) {
@@ -12,9 +12,8 @@ export default function HomeRoute() {
   const view = viewHandler.getActiveView()
 
   return (
-    <div className="p-4">
-      <ViewSelect />
+    <ViewWrapper>
       <ParticipantTable key={view.getId()} view={view} />
-    </div>
+    </ViewWrapper>
   )
 }
