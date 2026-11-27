@@ -1,10 +1,11 @@
--- Creates all 24 tables.
--- The two lines below wipe everything first, so this file can be re-run any time.
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
+\set ON_ERROR_STOP on
+-- Initialize missing schema objects while preserving existing tables and rows.
+BEGIN;
+CREATE SCHEMA IF NOT EXISTS public;
+SET LOCAL search_path = public;
 
 -- 1. Participant
-CREATE TABLE participant (
+CREATE TABLE IF NOT EXISTS participant (
     participant_identifier TEXT PRIMARY KEY CHECK (participant_identifier ~ '^P[0-9]{4}$'),
     participant_id         UUID NOT NULL UNIQUE,
     enrollment_date        DATE NOT NULL,
@@ -20,7 +21,7 @@ CREATE TABLE participant (
 );
 
 -- 2. In-person exams
-CREATE TABLE inperson_burden_events (
+CREATE TABLE IF NOT EXISTS inperson_burden_events (
     event_id               INTEGER PRIMARY KEY,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     procedure_name         TEXT NOT NULL CHECK (procedure_name IN ('Body Measures', 'Blood Pressure', 'DEXA Scan', 'Liver Ultrasound')),
@@ -34,7 +35,7 @@ CREATE TABLE inperson_burden_events (
     CHECK ((end_datetime IS NULL) = (duration_minutes IS NULL))
 );
 
-CREATE TABLE bmx_j (
+CREATE TABLE IF NOT EXISTS bmx_j (
     participant_identifier TEXT PRIMARY KEY REFERENCES participant,
     bmdstats SMALLINT NOT NULL CHECK (bmdstats BETWEEN 1 AND 4),
     bmxwt    NUMERIC, bmiwt    SMALLINT,
@@ -49,7 +50,7 @@ CREATE TABLE bmx_j (
     bmxhip   NUMERIC, bmihip   SMALLINT
 );
 
-CREATE TABLE bpx_j (
+CREATE TABLE IF NOT EXISTS bpx_j (
     participant_identifier TEXT PRIMARY KEY REFERENCES participant,
     peascct1 SMALLINT, bpxchr SMALLINT, bpaarm SMALLINT, bpacsz SMALLINT,
     bpxpls   SMALLINT, bpxpuls SMALLINT, bpxpty SMALLINT, bpxml1 SMALLINT,
@@ -59,7 +60,7 @@ CREATE TABLE bpx_j (
     bpxsy4 SMALLINT, bpxdi4 SMALLINT, bpaen4 SMALLINT
 );
 
-CREATE TABLE lux_j (
+CREATE TABLE IF NOT EXISTS lux_j (
     participant_identifier TEXT PRIMARY KEY REFERENCES participant,
     luaxstat SMALLINT NOT NULL CHECK (luaxstat BETWEEN 1 AND 4),
     luarxnc  SMALLINT, luarxnd SMALLINT, luarxin SMALLINT,
@@ -70,7 +71,7 @@ CREATE TABLE lux_j (
     luxcapm  SMALLINT, luxcpiqr SMALLINT
 );
 
-CREATE TABLE dxx_j (
+CREATE TABLE IF NOT EXISTS dxx_j (
     participant_identifier TEXT PRIMARY KEY REFERENCES participant,
     dxaexsts SMALLINT NOT NULL CHECK (dxaexsts BETWEEN 1 AND 6),
     radiation_msv NUMERIC(5,2) NOT NULL CHECK (radiation_msv >= 0 AND radiation_msv < 20),
@@ -98,7 +99,7 @@ CREATE TABLE dxx_j (
 );
 
 -- 3. On-site surveys
-CREATE TABLE test_data_surveys (
+CREATE TABLE IF NOT EXISTS test_data_surveys (
     participant_identifier TEXT NOT NULL REFERENCES participant,
     start_tm        TIMESTAMP NOT NULL,
     first_submit_tm TIMESTAMP NOT NULL,
@@ -115,7 +116,7 @@ CREATE TABLE test_data_surveys (
 );
 
 -- 4. Remote surveys (MDH)
-CREATE TABLE survey_results (
+CREATE TABLE IF NOT EXISTS survey_results (
     survey_result_key      UUID PRIMARY KEY,
     survey_key             UUID NOT NULL,
     survey_name            TEXT NOT NULL,
@@ -142,7 +143,7 @@ CREATE TABLE survey_results (
     CHECK (end_date >= start_date)
 );
 
-CREATE TABLE survey_step_results (
+CREATE TABLE IF NOT EXISTS survey_step_results (
     survey_step_result_key UUID PRIMARY KEY,
     survey_result_key      UUID NOT NULL REFERENCES survey_results ON DELETE CASCADE,
     participant_identifier TEXT NOT NULL REFERENCES participant,
@@ -153,7 +154,7 @@ CREATE TABLE survey_step_results (
     UNIQUE (survey_result_key, step_identifier)
 );
 
-CREATE TABLE survey_step_viewed (
+CREATE TABLE IF NOT EXISTS survey_step_viewed (
     participant_identifier TEXT NOT NULL REFERENCES participant,
     timestamp              TIMESTAMPTZ NOT NULL,
     participant_id         UUID NOT NULL,
@@ -179,7 +180,7 @@ CREATE TABLE survey_step_viewed (
 );
 
 -- 5. Communication (MDH)
-CREATE TABLE notification_sent (
+CREATE TABLE IF NOT EXISTS notification_sent (
     participant_id          UUID NOT NULL,
     participant_identifier  TEXT NOT NULL REFERENCES participant,
     timestamp               TIMESTAMPTZ NOT NULL,
@@ -193,7 +194,7 @@ CREATE TABLE notification_sent (
     PRIMARY KEY (participant_identifier, timestamp, notification_identifier)
 );
 
-CREATE TABLE email_send (
+CREATE TABLE IF NOT EXISTS email_send (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY,
@@ -205,7 +206,7 @@ CREATE TABLE email_send (
     subject                TEXT
 );
 
-CREATE TABLE email_delivery (
+CREATE TABLE IF NOT EXISTS email_delivery (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY REFERENCES email_send,
@@ -219,7 +220,7 @@ CREATE TABLE email_delivery (
     delivery_timestamp     TIMESTAMPTZ
 );
 
-CREATE TABLE email_open (
+CREATE TABLE IF NOT EXISTS email_open (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY REFERENCES email_send,
@@ -234,7 +235,7 @@ CREATE TABLE email_open (
     open_ip_address        INET
 );
 
-CREATE TABLE email_click (
+CREATE TABLE IF NOT EXISTS email_click (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY REFERENCES email_send,
@@ -251,7 +252,7 @@ CREATE TABLE email_click (
     click_link_tags        TEXT
 );
 
-CREATE TABLE email_bounce (
+CREATE TABLE IF NOT EXISTS email_bounce (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY REFERENCES email_send,
@@ -265,7 +266,7 @@ CREATE TABLE email_bounce (
     bounce_sub_type        TEXT
 );
 
-CREATE TABLE email_complaint (
+CREATE TABLE IF NOT EXISTS email_complaint (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY REFERENCES email_send,
@@ -279,7 +280,7 @@ CREATE TABLE email_complaint (
     complaint_user_agent   TEXT
 );
 
-CREATE TABLE sms_send (
+CREATE TABLE IF NOT EXISTS sms_send (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY,
@@ -288,7 +289,7 @@ CREATE TABLE sms_send (
     timestamp              TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE sms_delivery (
+CREATE TABLE IF NOT EXISTS sms_delivery (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY REFERENCES sms_send,
@@ -298,7 +299,7 @@ CREATE TABLE sms_delivery (
     timestamp              TIMESTAMPTZ
 );
 
-CREATE TABLE sms_failure (
+CREATE TABLE IF NOT EXISTS sms_failure (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY REFERENCES sms_send,
@@ -309,7 +310,7 @@ CREATE TABLE sms_failure (
     timestamp              TIMESTAMPTZ
 );
 
-CREATE TABLE sms_link_clicked (
+CREATE TABLE IF NOT EXISTS sms_link_clicked (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT NOT NULL REFERENCES participant,
     message_id             UUID PRIMARY KEY REFERENCES sms_send,
@@ -320,14 +321,14 @@ CREATE TABLE sms_link_clicked (
     timestamp              TIMESTAMPTZ
 );
 
-CREATE TABLE sms_opt_out (
+CREATE TABLE IF NOT EXISTS sms_opt_out (
     participant_id         UUID NOT NULL,
     participant_identifier TEXT PRIMARY KEY REFERENCES participant,
     phone_number           TEXT,
     timestamp              TIMESTAMPTZ
 );
 
-CREATE TABLE push_notification_sent (
+CREATE TABLE IF NOT EXISTS push_notification_sent (
     participant_id               UUID NOT NULL,
     participant_identifier       TEXT NOT NULL REFERENCES participant,
     timestamp                    TIMESTAMPTZ NOT NULL,
@@ -336,7 +337,7 @@ CREATE TABLE push_notification_sent (
     PRIMARY KEY (push_notification_identifier, timestamp)
 );
 
-CREATE TABLE push_notification_opened (
+CREATE TABLE IF NOT EXISTS push_notification_opened (
     participant_id               UUID NOT NULL,
     participant_identifier       TEXT NOT NULL REFERENCES participant,
     timestamp                    TIMESTAMPTZ,
@@ -344,11 +345,13 @@ CREATE TABLE push_notification_opened (
 );
 
 -- Indexes on FK columns (Postgres does not create these on its own)
-CREATE INDEX ON survey_results (participant_identifier);
-CREATE INDEX ON survey_step_results (participant_identifier);
-CREATE INDEX ON survey_step_viewed (participant_identifier);
-CREATE INDEX ON notification_sent (participant_identifier);
-CREATE INDEX ON email_send (participant_identifier);
-CREATE INDEX ON sms_send (participant_identifier);
-CREATE INDEX ON push_notification_sent (participant_identifier);
-CREATE INDEX ON push_notification_opened (participant_identifier);
+CREATE INDEX IF NOT EXISTS survey_results_participant_identifier_idx ON survey_results (participant_identifier);
+CREATE INDEX IF NOT EXISTS survey_step_results_participant_identifier_idx ON survey_step_results (participant_identifier);
+CREATE INDEX IF NOT EXISTS survey_step_viewed_participant_identifier_idx ON survey_step_viewed (participant_identifier);
+CREATE INDEX IF NOT EXISTS notification_sent_participant_identifier_idx ON notification_sent (participant_identifier);
+CREATE INDEX IF NOT EXISTS email_send_participant_identifier_idx ON email_send (participant_identifier);
+CREATE INDEX IF NOT EXISTS sms_send_participant_identifier_idx ON sms_send (participant_identifier);
+CREATE INDEX IF NOT EXISTS push_notification_sent_participant_identifier_idx ON push_notification_sent (participant_identifier);
+CREATE INDEX IF NOT EXISTS push_notification_opened_participant_identifier_idx ON push_notification_opened (participant_identifier);
+
+COMMIT;

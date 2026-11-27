@@ -1,24 +1,40 @@
-These are just helper srcipts to help populate the database for now.
-Later on we will do it through the frontend functionality as we decided for the URD.
+# Database setup and CSV imports
 
+Run the commands from the repository root with the Compose PostgreSQL service
+running. Use the database and user from your `.env` if you changed the defaults.
 
-## How to run
+## Initialize and seed the database
 
-Run these from the repository root in PowerShell, with the containers running (`docker compose up --build --wait`).
-
-```powershell
-# 1. Copy the CSVs and the SQL files into the postgres container
-docker compose cp csv_data/. postgres:/data
+```sh
 docker compose cp db/. postgres:/sql
+docker compose cp csv_data/. postgres:/data
 
-# 2. Create the tables (wipes existing tables first)
-docker compose exec postgres psql -U rural_dev -d rural_dev -v ON_ERROR_STOP=1 -f /sql/schema.sql
-
-# 3. Load the data, prints the row count per table at the end
-docker compose exec postgres psql -U rural_dev -d rural_dev -f /sql/load.sql
+docker compose exec postgres psql -X -U rural_dev -d rural_dev -f /sql/schema.sql
+docker compose exec postgres psql -X -U rural_dev -d rural_dev -f /sql/load.sql
 ```
 
-- `schema.sql` creates the 24 tables. `load.sql` fills them from the CSVs.
-- After editing either SQL file, repeat the `db/.` copy and steps 2 and 3.
-- Use the user and database from your `.env` if you changed them.
-- To look around: `docker compose exec postgres psql -U rural_dev -d rural_dev`, then `\dt` to list tables, `\d participant` to see one, `\q` to quit.
+`schema.sql` creates missing tables and indexes and preserves existing ones.
+Changes to existing table definitions require a separate migration.
+`load.sql` imports the fixture files in dependency order in one transaction and
+prints the resulting table totals. Both scripts can be rerun against a populated
+database. If a fixture participant's identifier or UUID belongs to a different
+participant, `load.sql` rolls back before importing dependent rows.
+
+To look around: `docker compose exec postgres psql -U rural_dev -d rural_dev`, then `\dt` to list tables, `\d participant` to see one, `\q` to quit.
+
+## Append another CSV
+
+Copy the file into the container, then specify its path and the destination table.
+For example, to append participants:
+
+```sh
+docker compose cp "new participants.csv" "postgres:/data/new participants.csv"
+docker compose exec postgres psql -X -U rural_dev -d rural_dev --single-transaction -v target_table=participant -v "csv_file=/data/new participants.csv" -f /sql/import.sql
+```
+
+The import expects a header followed by data in the destination table's column
+order. Import parent records before files that reference them.
+
+Rows that conflict with an existing primary or unique key are skipped and counted
+in the output. The existing row keeps its values. Invalid field values or foreign
+keys on rows being inserted cause the transaction to roll back.
