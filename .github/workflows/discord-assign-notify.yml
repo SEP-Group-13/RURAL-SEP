@@ -1,0 +1,72 @@
+name: Discord assignment pings
+
+on:
+  issues:
+    types: [assigned]
+  # pull_request_target so secrets also work on PRs from forks.
+  # Safe here: this workflow never checks out or runs PR code.
+  pull_request_target:
+    types: [assigned, review_requested]
+
+permissions: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          USER_MAP: ${{ vars.DISCORD_USER_MAP }}
+        run: |
+          set -euo pipefail
+          ev="$GITHUB_EVENT_PATH"
+          action=$(jq -r '.action' "$ev")
+
+          # Who should be pinged?
+          if [ "$action" = "review_requested" ]; then
+            login=$(jq -r '.requested_reviewer.login // empty' "$ev")
+          else
+            login=$(jq -r '.assignee.login // empty' "$ev")
+          fi
+          if [ -z "$login" ]; then
+            echo "No individual user (probably a team review request); skipping."
+            exit 0
+          fi
+
+          # Details about the issue / PR
+          title=$(jq -r '(.issue // .pull_request).title' "$ev")
+          url=$(jq -r '(.issue // .pull_request).html_url' "$ev")
+          num=$(jq -r '(.issue // .pull_request).number' "$ev")
+          sender=$(jq -r '.sender.login' "$ev")
+          repo="$GITHUB_REPOSITORY"
+
+          if [ "$action" = "review_requested" ]; then
+            what="was asked to review PR #$num"
+          elif [ "$GITHUB_EVENT_NAME" = "issues" ]; then
+            what="was assigned issue #$num"
+          else
+            what="was assigned PR #$num"
+          fi
+
+          # Map GitHub login -> Discord user ID
+          map="${USER_MAP:-}"
+          [ -z "$map" ] && map='{}'
+          discord_id=$(jq -r --arg u "$login" '.[$u] // empty' <<<"$map")
+
+          if [ -n "$discord_id" ]; then
+            mention="<@$discord_id>"
+          else
+            mention="**$login**"
+          fi
+
+          content="🔔 $mention $what in \`$repo\` by $sender
+          **$title**
+          $url"
+
+          # allowed_mentions limits pings to that one user
+          # (a title containing @everyone won't ping anyone)
+          jq -n --arg content "$content" --arg id "$discord_id" '{
+            content: $content,
+            allowed_mentions: { users: (if $id == "" then [] else [$id] end) }
+          }' | curl -fsS -H "Content-Type: application/json" -d @- "$WEBHOOK"
